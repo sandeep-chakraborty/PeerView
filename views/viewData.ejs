@@ -1,0 +1,65 @@
+<!-- viewData.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>View Papers</title>
+    <!-- Add Bootstrap CSS -->
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    />
+  </head>
+  <body>
+    <div class="container-md mt-5">
+      <h1>View Papers</h1>
+      <table class="table table-bordered">
+        <thead class="thead-dark">
+          <tr>
+            <th>Department</th>
+            <th>Semester</th>
+            <th>Paper Name</th>
+            <th>Subject</th>
+            <th>Year</th>
+            <th>View PDF</th>
+            <th>Edit</th>
+            <th>Delete</th>
+          </tr>
+        </thead>
+        <tbody id="papersTableBody">
+          <% papers.forEach(paper => { %>
+          <tr>
+            <td><%= paper.dept %></td>
+            <td><%= paper.sem %></td>
+            <td><%= paper.paperName %></td>
+            <td><%= paper.subject %></td>
+            <td><%= paper.year %></td>
+            <td>
+              <a href="<%= paper.paperUrl %>" target="_blank">View PDF</a>
+            </td>
+
+            <td>
+              <!-- Make sure to use correct <%= %> syntax for the URL -->
+              <form
+                action="/delete/<%= paper.paperName %>?_method=DELETE"
+                method="post"
+              >
+                <input type="hidden" name="_method" value="DELETE" />
+                <button type="submit" class="btn btn-danger">Delete</button>
+              </form>
+            </td>
+          </tr>
+          <% }); %>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Add Bootstrap JS and jQuery -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+  </body>
+</html>

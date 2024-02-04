@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "645624932762",
+    "firebase_url": "https://peerview-49f5a-default-rtdb.firebaseio.com",
+    "project_id": "peerview-49f5a",
+    "storage_bucket": "peerview-49f5a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:645624932762:android:783ca23714dec06c3ab223",
+        "android_client_info": {
+          "package_name": "com.example.gps"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAbhSiaGPba7dV_SlVXWI0VQp6hQ2PQP-Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
