@@ -1,44 +1,102 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>PDF Upload</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-</head>
-<body>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    />
+  </head>
+  <body>
     <div class="container">
-        <h1>PDF Upload</h1>
-        <form action="/upload" method="post" enctype="multipart/form-data">
-            <div class="form-group">
-                <label for="pdf">Choose PDF:</label>
-                <input type="file" class="form-control-file" name="pdf" id="pdf" accept=".pdf" required>
-            </div>
-            
-            <div class="form-group">
-                <label for="dept">Department:</label>
-                <input type="text" class="form-control" name="dept" id="dept" required>
-            </div>
-            
-            <div class="form-group">
-                <label for="sem">Semester:</label>
-                <input type="text" class="form-control" name="sem" id="sem" required>
-            </div>
+      <h1>PDF Upload</h1>
+      <form action="/upload" method="post" enctype="multipart/form-data">
+        <div class="form-group">
+          <label for="pdf">Choose PDF:</label>
+          <input
+            type="file"
+            class="form-control-file"
+            name="pdf"
+            id="pdf"
+            accept=".pdf"
+            required
+          />
+        </div>
 
-            <div class="form-group">
-                <label for="subject">Subject:</label>
-                <input type="text" class="form-control" name="subject" id="subject" required>
-            </div>
-            
-            <div class="form-group">
-                <label for="year">Year:</label>
-                <input type="text" class="form-control" name="year" id="year" required>
-            </div>
-            
-            <button type="submit" class="btn btn-primary">Upload PDF</button>
-        </form>
+        <div class="form-group">
+          <label for="dept">Department:</label>
+          <select class="form-control" name="dept" id="dept" required>
+            <!-- Departments will be dynamically loaded here using JavaScript -->
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="sem">Semester:</label>
+          <input
+            type="text"
+            class="form-control"
+            name="sem"
+            id="sem"
+            required
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="subject">Subject:</label>
+          <input
+            type="text"
+            class="form-control"
+            name="subject"
+            id="subject"
+            required
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="year">Year:</label>
+          <input
+            type="text"
+            class="form-control"
+            name="year"
+            id="year"
+            required
+          />
+        </div>
+
+        <button type="submit" class="btn btn-primary">Upload PDF</button>
+        <button
+          onclick="window.location.href = 'http://localhost:3000/dept';"
+          class="btn btn-primary"
+        >
+          Add departmenr
+        </button>
+        <button
+          onclick="window.location.href = 'http://localhost:3000/view';"
+          class="btn btn-primary"
+        >
+          View Papers
+        </button>
+      </form>
     </div>
-    
+    <script>
+      // Fetch department names and populate the dropdown list
+      fetch("/departments")
+        .then((response) => response.json())
+        .then((departments) => {
+          const deptDropdown = document.getElementById("dept");
+
+          // Add each department as an option in the dropdown
+          departments.forEach((department) => {
+            const option = document.createElement("option");
+            option.value = department.name;
+            option.text = department.name;
+            deptDropdown.add(option);
+          });
+        })
+        .catch((error) => console.error("Error fetching departments:", error));
+    </script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-</body>
+  </body>
 </html>

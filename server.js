@@ -4,11 +4,13 @@ const admin = require("firebase-admin");
 const { getDownloadURL } = require("firebase-admin/storage");
 const { v4: uuidv4 } = require("uuid"); // Import uuid
 const { storage, database } = require("./firebase");
+const bodyParser = require("body-parser");
 const app = express();
 const upload = multer();
 const port = 3000;
 const methodOverride = require("method-override");
 app.use(methodOverride("_method"));
+app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(express.json());
 app.use(express.static("public"));
@@ -185,6 +187,47 @@ app.get("/edit/:paperId", async (req, res) => {
       res.status(500).json({ error: error.message });
     }
   });
+  app.get("/dept", (req, res) => {
+    res.sendFile(__dirname + "/addDept.html");
+  });
+  
+  // Route to handle the POST request from the addDept.html form
+app.post("/addDept", async (req, res) => {
+  try {
+    const { dept } = req.body;
+
+    // Add the new department to the Realtime Database
+    const departmentRef = database.ref("/departments").child(dept);
+    await departmentRef.set({
+      name: dept,
+    });
+
+    // Create child nodes (1, 2, 3, 4, 5, 6) under the new department
+    for (let i = 1; i <= 6; i++) {
+      await departmentRef.child(i.toString()).set({
+        
+        name: `Child ${i} of ${dept}`,
+      });
+    }
+
+    console.log(`Department ${dept} added to Realtime Database`);
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+app.get("/departments", async (req, res) => {
+    try {
+        const snapshot = await database.ref('/departments').once('value');
+        const data = snapshot.val();
+        const departments = Object.values(data || {});
+        res.json(departments);
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
   
 app.listen(3000, () => {
     console.log(`Server is running at port http://localhost:${port}`);
