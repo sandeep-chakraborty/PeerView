@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Departments</title>
+    <!-- Include Bootstrap CSS link -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* Add any custom styles here if needed */
+    </style>
+</head>
+
+<body>
+    <div class="container mt-4">
+        <h1 class="mb-4">Departments</h1>
+
+        <table class="table table-bordered">
+            <thead class="thead-light">
+                <tr>
+                    <th>ID</th>
+                    <th>Department Name</th>
+                    <th>Action</th> <!-- New column for the delete button -->
+                </tr>
+            </thead>
+            <tbody>
+                <% for (let i = 0; i < departments.length; i++) { %>
+                    <tr>
+                        <td><%= i + 1 %></td>
+                        <td><%= departments[i].name %></td>
+                        <td>
+                            <!-- Delete button with confirmation -->
+                            <button class="btn btn-danger" onclick="confirmDelete('<%= departments[i].name %>')">Delete</button>
+                        </td>
+                    </tr>
+                <% } %>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Include Bootstrap JS and Popper.js scripts -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <!-- JavaScript to handle delete confirmation and AJAX request -->
+    <script>
+        function confirmDelete(departmentName) {
+            const confirmation = confirm(`Are you sure you want to delete the department "${departmentName}"?`);
+
+            if (confirmation) {
+                // Send AJAX request to delete the department
+                fetch(`/deleteDepartment/${encodeURIComponent(departmentName)}`, {
+                    method: 'DELETE'
+                })
+                .then(response => {
+                    if (response.ok) {
+                        alert(`Department "${departmentName}" deleted successfully.`);
+                        location.reload(); // Reload the page
+                    } else {
+                        alert(`Error deleting department "${departmentName}".`);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred while processing your request.');
+                });
+            }
+        }
+    </script>
+</body>
+
+</html>

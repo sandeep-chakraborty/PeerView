@@ -2,64 +2,179 @@
 
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>View Papers</title>
-    <!-- Add Bootstrap CSS -->
-    <link
-      rel="stylesheet"
-      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
-    />
-  </head>
-  <body>
-    <div class="container-md mt-5">
-      <h1>View Papers</h1>
-      <table class="table table-bordered">
-        <thead class="thead-dark">
-          <tr>
-            <th>Department</th>
-            <th>Semester</th>
-            <th>Paper Name</th>
-            <th>Subject</th>
-            <th>Year</th>
-            <th>View PDF</th>
-            <th>Edit</th>
-            <th>Delete</th>
-          </tr>
-        </thead>
-        <tbody id="papersTableBody">
-          <% papers.forEach(paper => { %>
-          <tr>
-            <td><%= paper.dept %></td>
-            <td><%= paper.sem %></td>
-            <td><%= paper.paperName %></td>
-            <td><%= paper.subject %></td>
-            <td><%= paper.year %></td>
-            <td>
-              <a href="<%= paper.paperUrl %>" target="_blank">View PDF</a>
-            </td>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>View Papers</title>
+        <!-- Add Bootstrap CSS -->
+        <link
+            rel="stylesheet"
+            href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+        />
+    </head>
+    <body>
+        <div class="container-md mt-5">
+            <h1>View Papers</h1>
+            <table class="table table-bordered">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>Department</th>
+                        <th>Semester</th>
+                        <th>Paper Name</th>
+                        <th>Subject</th>
+                        <th>Year</th>
+                        <th>View PDF</th>
+                        <th>Edit</th>
+                        <th>Delete</th>
+                    </tr>
+                </thead>
+                <tbody id="papersTableBody">
+                    <% papers.forEach(paper => { %>
+                    <tr>
+                        <td><%= paper.dept %></td>
+                        <td><%= paper.sem %></td>
+                        <td><%= paper.paperName %></td>
+                        <td><%= paper.subject %></td>
+                        <td><%= paper.year %></td>
+                        <td>
+                            <a href="<%= paper.paperUrl %>" target="_blank">View PDF</a>
+                        </td>
 
-            <td>
-              <!-- Make sure to use correct <%= %> syntax for the URL -->
-              <form
-                action="/delete/<%= paper.paperName %>?_method=DELETE"
-                method="post"
-              >
-                <input type="hidden" name="_method" value="DELETE" />
-                <button type="submit" class="btn btn-danger">Delete</button>
-              </form>
-            </td>
-          </tr>
-          <% }); %>
-        </tbody>
-      </table>
-    </div>
+                        <td>
+                            <!-- Button to open the edit modal -->
+                            <button class="btn btn-primary" data-toggle="modal" data-target="#editModal" data-papername="<%= paper.paperName %>" data-dept="<%= paper.dept %>" data-subject="<%= paper.subject %>" data-sem="<%= paper.sem %>" data-year="<%= paper.year %>">Edit</button>
+                        </td>
 
-    <!-- Add Bootstrap JS and jQuery -->
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+                        <td>
+                            <!-- Make sure to use correct <%= %> syntax for the URL -->
+                            <form
+                                action="/delete/<%= paper.paperName %>?_method=DELETE"
+                                method="post"
+                                onsubmit="return confirm('Are you sure you want to delete this paper?');"
+                            >
+                                <input type="hidden" name="_method" value="DELETE" />
+                                <button type="submit" class="btn btn-danger">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                    <% }); %>
+                </tbody>
+            </table>
+        </div>
 
-  </body>
+        <!-- Add Bootstrap JS and jQuery -->
+        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+        <!-- Modal for editing paper details -->
+        <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="editModalLabel">Edit Paper</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <!-- Form for editing paper details -->
+                        <form id="editForm" method="post" action="/edit">
+                                <!-- Hidden input for _method -->
+                                <input type="hidden" name="_method" value="PUT" />
+                            
+                                <!-- Hidden input for paperName -->
+                                <input type="hidden" id="editPaperName" name="paperName" value="" />
+                            
+                            <!-- Dropdown for department -->
+                            <div class="form-group">
+                                <label for="editDept">Department:</label>
+                                <select class="form-control" id="editDept" name="dept" required>
+                                    <!-- Department options will be added dynamically using JavaScript -->
+                                </select>
+                            </div>
+
+                            <!-- Dropdown for subject -->
+                            <div class="form-group">
+                                <label for="editSubject">Subject:</label>
+                                <select class="form-control" id="editSubject" name="subject" required>
+                                    <!-- Subject options will be added dynamically using JavaScript -->
+                                </select>
+                            </div>
+
+                            <!-- Other input fields for editing -->
+                            <div class="form-group">
+                                <label for="editSem">Semester:</label>
+                                <input type="text" class="form-control" id="editSem" name="sem" required />
+                            </div>
+                            <div class="form-group">
+                                <label for="editYear">Year:</label>
+                                <input type="text" class="form-control" id="editYear" name="year" required />
+                            </div>
+
+                            <!-- Save changes button -->
+                            <button type="submit" class="btn btn-primary">Save Changes</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            // Fetch departments and populate the dropdown on DOMContentLoaded
+            document.addEventListener("DOMContentLoaded", async function () {
+                const deptDropdown = document.getElementById("editDept");
+                const subjectDropdown = document.getElementById("editSubject");
+
+                // Fetch departments from the server
+                const departmentsResponse = await fetch("/departments");
+                const departments = await departmentsResponse.json();
+
+                // Populate the department dropdown
+                departments.forEach((department) => {
+                    const option = document.createElement("option");
+                    option.value = department.name;
+                    option.text = department.name;
+                    deptDropdown.add(option);
+                });
+
+                // Function to populate subjects based on the selected department
+                async function populateSubjects(selectedDept) {
+                    // Fetch subjects directly from the subjects node
+                    const subjectsResponse = await fetch(`/subjects/${selectedDept}`);
+                    const subjects = await subjectsResponse.json();
+
+                    // Populate the subject dropdown
+                    subjectDropdown.innerHTML = ""; // Clear existing options
+
+                    Object.entries(subjects).forEach(([key, value]) => {
+                        const option = document.createElement("option");
+                        option.value = key;
+                        option.text = value;
+                        subjectDropdown.add(option);
+                    });
+                }
+
+                // Event listener for when the department dropdown is changed
+                deptDropdown.addEventListener('change', function() {
+                    const selectedDept = this.value;
+                    // Populate subject dropdown based on the selected department
+                    populateSubjects(selectedDept);
+                });
+            });
+        </script>
+
+        <script>
+            // Show alert after deleting paper and refresh the page
+            document.addEventListener("DOMContentLoaded", function () {
+                const deleteForm = document.querySelector("form[action^='/delete/']");
+                if (deleteForm) {
+                    deleteForm.addEventListener("submit", function () {
+                        alert("Paper deleted successfully.");
+                        location.reload();
+                    });
+                }
+            });
+        </script>
+    </body>
 </html>
