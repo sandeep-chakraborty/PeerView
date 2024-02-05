@@ -195,18 +195,10 @@ app.get("/edit/:paperId", async (req, res) => {
     try {
       const { dept } = req.body;
   
-      // Add the new department to the Realtime Database
+      // Add the new department to the Realtime Database under the 'departments' node
       const departmentRef = database.ref("/departments").child(dept);
       await departmentRef.set({
         name: dept,
-        semesters: { // Add a semesters node under each department
-          1: { name: "Semester 1" },
-          2: { name: "Semester 2" },
-          3: { name: "Semester 3" },
-          4: { name: "Semester 4" },
-          5: { name: "Semester 5" },
-          6: { name: "Semester 6" },
-        },
       });
   
       console.log(`Department ${dept} added to Realtime Database`);
@@ -227,6 +219,22 @@ app.get("/edit/:paperId", async (req, res) => {
       res.status(500).json({ error: error.message });
     }
   });
+  // Update your server-side code
+
+// Add a route to fetch the list of departments
+app.get("/department", async (req, res) => {
+    try {
+      const snapshot = await database.ref('/departments').once('value');
+      const data = snapshot.val();
+      const departments = Object.keys(data || {});
+      res.json(departments);
+    } catch (error) {
+      console.error('Error:', error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+  
+  // ... (existing code)
   
   app.get("/departments/:dept", async (req, res) => {
     try {
@@ -246,10 +254,58 @@ app.get("/edit/:paperId", async (req, res) => {
       res.status(500).json({ error: error.message });
     }
   });
+  // Add a new route to handle subject addition
+  // Add a route to render addSub.html
+  app.get("/addSub", (req, res) => {
+    res.sendFile(__dirname + "/addSub.html");
+  });
+  app.post("/addSubject", async (req, res) => {
+    try {
+      const { dept, subjectName } = req.body;
+  
+      // Check if dept is defined and has a value
+      if (!dept || dept.trim() === '') {
+        return res.status(400).json({ error: 'Department is required' });
+      }
+  
+      // Fetch the current count of subjects for the selected department
+      const snapshot = await database.ref(`/subjects/${dept}`).once('value');
+      const subjects = snapshot.val() || {};
+      const subjectCount = Object.keys(subjects).length + 1;
+  
+      // Create a new subject key-value pair under the selected department
+      const subjectKey = `sub-${subjectCount}`;
+      const subjectNode = {};
+      subjectNode[subjectKey] = subjectName;
+  
+      // Add the new subject under the selected department
+      await database.ref(`/subjects/${dept}`).update(subjectNode);
+  
+      console.log(`Subject ${subjectKey}: ${subjectName} added under department ${dept}`);
+      res.status(200).send(`Subject ${subjectKey}: ${subjectName} added successfully`);
+    } catch (error) {
+      console.error("Error:", error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+  // ... (existing code)
+
+// Add a new route to handle subjects for a specific department
+app.get("/subjects/:dept", async (req, res) => {
+    try {
+      const deptName = req.params.dept;
+      const snapshot = await database.ref(`/subjects/${deptName}`).once('value');
+      const subjects = snapshot.val();
+  
+      res.json(subjects || {}); // Return the subjects or an empty object
+  
+    } catch (error) {
+      console.error('Error:', error);
+      res.status(500).json({ error: error.message });
+    }
+  });
   
   
-  
-  
-app.listen(3000, () => {
+  app.listen(3000, () => {
     console.log(`Server is running at port http://localhost:${port}`);
 });

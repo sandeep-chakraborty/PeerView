@@ -1,0 +1,81 @@
+<!-- addSub.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Subject</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container">
+        <h2>Add Subject</h2>
+        <form id="addSubForm">
+            <div class="form-group">
+                <label for="dept">Select Department:</label>
+                <select id="dept" name="dept" class="form-control">
+                    <!-- Departments will be dynamically populated from the server -->
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="subjectName">Subject Name:</label>
+                <input type="text" id="subjectName" name="subjectName" required class="form-control">
+            </div>
+
+            <button type="submit" class="btn btn-primary">Add Subject</button>
+        </form>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+     document.addEventListener("DOMContentLoaded", async function () {
+        // Fetch departments from the server
+        const response = await fetch("/departments");
+        const departments = await response.json();
+
+        // Populate the department dropdown
+        const deptDropdown = document.getElementById("dept");
+        departments.forEach((dept) => {
+          const option = document.createElement("option");
+          option.value = dept.name;
+          option.text = dept.name;
+          deptDropdown.add(option);
+        });
+
+        // Handle form submission
+        document.getElementById('addSubForm').addEventListener('submit', async function (event) {
+            event.preventDefault();
+
+            const formData = new FormData(this);
+            const formDataObject = {};
+            
+            formData.forEach((value, key) => {
+                formDataObject[key] = value;
+            });
+
+            try {
+                const response = await fetch('/addSubject', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formDataObject),
+                });
+
+                if (response.ok) {
+                    alert('Subject added successfully!');
+                } else {
+                    alert('Failed to add subject. Please try again.');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An error occurred. Please try again later.');
+            }
+        });
+    });
+    </script>
+</body>
+</html>

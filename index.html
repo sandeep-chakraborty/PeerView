@@ -13,11 +13,11 @@
     <div class="container">
       <h1>PDF Upload</h1>
       <form action="/upload" method="post" enctype="multipart/form-data">
-        <div class="form-group">
-          <label for="pdf">Choose PDF:</label>
+        <div class="form-group custom-file">
+          <label class="custom-file-label" for="pdf">Choose PDF:</label>
           <input
             type="file"
-            class="form-control-file"
+            class="custom-file-input"
             name="pdf"
             id="pdf"
             accept=".pdf"
@@ -34,21 +34,21 @@
 
         <div class="form-group">
           <label for="sem">Semester:</label>
-          <select class="form-control" id="sem" name="sem" required>
-            <!-- Semester options will be added dynamically -->
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label for="subject">Subject:</label>
           <input
             type="text"
             class="form-control"
-            name="subject"
-            id="subject"
+            id="sem"
+            name="sem"
             required
           />
         </div>
+
+        <div class="form-group">
+            <label for="subject">Subject:</label>
+            <select class="form-control" name="subject" id="subject" required>
+              <!-- Subjects will be dynamically loaded here using JavaScript -->
+            </select>
+          </div>
 
         <div class="form-group">
           <label for="year">Year:</label>
@@ -62,53 +62,65 @@
         </div>
 
         <button type="submit" class="btn btn-primary">Upload PDF</button>
-        <a href="http://localhost:3000/dept" class="btn btn-primary">Add Department</a>
-        <a href="http://localhost:3000/view" class="btn btn-primary">View Papers</a>
+        <a href="http://localhost:3000/dept" class="btn btn-primary"
+          >Add Department</a
+        >
+        <a href="http://localhost:3000/view" class="btn btn-primary"
+          >View Papers</a
+        >
+        <a href="http://localhost:3000/addSub" class="btn btn-primary"
+        >Add subject</a
+      >
       </form>
     </div>
     <script>
-        document.addEventListener("DOMContentLoaded", async function () {
-            // Fetch departments from the server
-            const response = await fetch('/departments');
-            const departments = await response.json();
-    
-            // Populate the department dropdown
-            const deptDropdown = document.getElementById('dept');
-            departments.forEach(department => {
-                const option = document.createElement('option');
-                option.value = department.name;
-                option.text = department.name;
-                deptDropdown.add(option);
-            });
-    
-            // Fetch and populate semesters for the default department
-            updateSemesters();
-        });
-    
-        // Function to update semesters dropdown based on the selected department
-        async function updateSemesters() {
-            const selectedDept = document.getElementById('dept').value;
-    
-            // Fetch semesters for the selected department
-            const response = await fetch(`/departments/${selectedDept}`);
-            const semesters = await response.json();
-    
-            // Populate the semesters dropdown
-            const semDropdown = document.getElementById('sem');
-            semDropdown.innerHTML = ''; // Clear previous options
-    
-            semesters.forEach(semester => {
-                const option = document.createElement('option');
-                option.value = semester.name;
-                option.text = semester.name;
-                semDropdown.add(option);
-            });
-        }
-    
-        // Add the onchange attribute to the department dropdown
-        document.getElementById('dept').onchange = updateSemesters;
+    document.addEventListener("DOMContentLoaded", async function () {
+  const deptDropdown = document.getElementById("dept");
+  const subjectDropdown = document.getElementById("subject");
+
+  // Fetch departments from the server
+  const departmentsResponse = await fetch("/departments");
+  const departments = await departmentsResponse.json();
+
+  // Populate the department dropdown
+  departments.forEach((department) => {
+    const option = document.createElement("option");
+    option.value = department.name;
+    option.text = department.name;
+    deptDropdown.add(option);
+  });
+
+  // Function to populate subjects based on the selected department
+  async function populateSubjects(selectedDept) {
+    // Fetch subjects directly from the subjects node
+    const subjectsResponse = await fetch(`/subjects/${selectedDept}`);
+    const subjects = await subjectsResponse.json();
+
+    // Populate the subject dropdown
+    subjectDropdown.innerHTML = ""; // Clear existing options
+
+    Object.entries(subjects).forEach(([key, value]) => {
+      const option = document.createElement("option");
+      option.value = key;
+      option.text = value;
+      subjectDropdown.add(option);
+    });
+  }
+
+  // Event listener for department dropdown change
+  deptDropdown.addEventListener("change", async function () {
+    const selectedDept = deptDropdown.value;
+    await populateSubjects(selectedDept);
+  });
+
+  // Initial population of subjects based on the default selected department
+  const initialSelectedDept = deptDropdown.value;
+  await populateSubjects(initialSelectedDept);
+});
+
+
     </script>
-    
+
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
   </body>
 </html>
