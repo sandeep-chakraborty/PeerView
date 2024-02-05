@@ -210,6 +210,7 @@ app.get("/edit/:paperId", async (req, res) => {
       });
   
       console.log(`Department ${dept} added to Realtime Database`);
+      res.status(200).send(`Department ${dept} added to Realtime Database`);
     } catch (error) {
       console.error("Error:", error);
       res.status(500).json({ error: error.message });
