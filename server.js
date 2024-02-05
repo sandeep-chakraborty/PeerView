@@ -195,9 +195,10 @@ app.get("/edit/:paperId", async (req, res) => {
     try {
       const { dept } = req.body;
   
-      // Add the new department to the Realtime Database without the "name" attribute
+      // Add the new department to the Realtime Database
       const departmentRef = database.ref("/departments").child(dept);
       await departmentRef.set({
+        name: dept,
         semesters: { // Add a semesters node under each department
           1: { name: "Semester 1" },
           2: { name: "Semester 2" },
@@ -214,14 +215,11 @@ app.get("/edit/:paperId", async (req, res) => {
       res.status(500).json({ error: error.message });
     }
   });
-  
-  // ... (other routes)
-  
   app.get("/departments", async (req, res) => {
     try {
       const snapshot = await database.ref('/departments').once('value');
       const data = snapshot.val();
-      const departments = Object.keys(data || {});
+      const departments = Object.values(data || {});
       res.json(departments);
     } catch (error) {
       console.error('Error:', error);
@@ -237,7 +235,7 @@ app.get("/edit/:paperId", async (req, res) => {
   
       if (department) {
         // Extract semester names and details from the semesters node
-        const semesters = Object.keys(department.semesters || {});
+        const semesters = Object.values(department.semesters || {});
         res.json(semesters);
       } else {
         res.json([]); // Return an empty array if the department is not found
@@ -247,6 +245,7 @@ app.get("/edit/:paperId", async (req, res) => {
       res.status(500).json({ error: error.message });
     }
   });
+  
   
   
   
