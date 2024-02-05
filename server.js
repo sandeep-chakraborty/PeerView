@@ -309,42 +309,81 @@ app.get("/subjects/:dept", async (req, res) => {
 });
 // Change from "/departments" to "/viewdepts"
 app.get("/viewdepts", async (req, res) => {
-    try {
-      const snapshot = await database.ref("/departments").once("value");
-      const data = snapshot.val();
-      const departments = Object.values(data || {});
-  
-      res.render("viewDepts", { departments }); // Use "viewDepts" as the EJS file
-    } catch (error) {
-      console.error("Error:", error);
-      res.status(500).json({ error: error.message });
+  try {
+    const snapshot = await database.ref("/departments").once("value");
+    const data = snapshot.val();
+    const departments = Object.values(data || {});
+
+    res.render("viewDepts", { departments }); // Use "viewDepts" as the EJS file
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.delete("/deleteDepartment/:deptName", async (req, res) => {
+  try {
+    const deptName = req.params.deptName;
+
+    // Check if the department exists
+    const snapshot = await database
+      .ref(`/departments/${deptName}`)
+      .once("value");
+    const department = snapshot.val();
+
+    if (!department) {
+      return res.status(404).json({ error: "Department not found" });
     }
-  });
-  
-  app.delete("/deleteDepartment/:deptName", async (req, res) => {
-    try {
-      const deptName = req.params.deptName;
-  
-      // Check if the department exists
-      const snapshot = await database.ref(`/departments/${deptName}`).once("value");
-      const department = snapshot.val();
-  
-      if (!department) {
-        return res.status(404).json({ error: "Department not found" });
-      }
-  
-      // Delete the department from Firebase Realtime Database
-      await database.ref(`/departments/${deptName}`).remove();
-  
-      console.log(`Department ${deptName} deleted from Realtime Database.`);
-      res.status(200).send(`Department ${deptName} deleted successfully.`);
-    } catch (error) {
-      console.error("Error:", error);
-      res.status(500).json({ error: error.message });
+
+    // Delete the department from Firebase Realtime Database
+    await database.ref(`/departments/${deptName}`).remove();
+
+    console.log(`Department ${deptName} deleted from Realtime Database.`);
+    res.status(200).send(`Department ${deptName} deleted successfully.`);
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+// Add a new route to handle subjects for a specific department
+// Add a new route to handle all subjects
+app.get("/viewSub", async (req, res) => {
+  try {
+    const snapshot = await database.ref("/subjects").once("value");
+    const subjects = snapshot.val();
+
+    res.render("viewSub", { subjects }); // Pass the entire subjects object
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+//for subject deletion
+app.post("/deleteSubject", async (req, res) => {
+  try {
+    const { deptName, subjectKey } = req.body;
+
+    // Check if the department and subject exist
+    const snapshot = await database.ref(`/subjects/${deptName}`).once("value");
+    const subjects = snapshot.val();
+
+    if (!subjects || !subjects[subjectKey]) {
+      return res.status(404).json({ error: "Subject not found" });
     }
-  });
-  
-  
+
+    // Delete the subject from Firebase Realtime Database
+    delete subjects[subjectKey];
+    await database.ref(`/subjects/${deptName}`).set(subjects);
+
+    console.log(`Subject ${subjectKey} deleted from department ${deptName}`);
+    // res.status(200).send(`Subject ${subjectKey} deleted successfully`);
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 app.listen(3000, () => {
   console.log(`Server is running at port http://localhost:${port}`);
 });
