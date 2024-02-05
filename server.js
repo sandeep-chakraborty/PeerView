@@ -191,43 +191,64 @@ app.get("/edit/:paperId", async (req, res) => {
     res.sendFile(__dirname + "/addDept.html");
   });
   
-  // Route to handle the POST request from the addDept.html form
-app.post("/addDept", async (req, res) => {
-  try {
-    const { dept } = req.body;
-
-    // Add the new department to the Realtime Database
-    const departmentRef = database.ref("/departments").child(dept);
-    await departmentRef.set({
-      name: dept,
-    });
-
-    // Create child nodes (1, 2, 3, 4, 5, 6) under the new department
-    for (let i = 1; i <= 6; i++) {
-      await departmentRef.child(i.toString()).set({
-        
-        name: `Child ${i} of ${dept}`,
-      });
-    }
-
-    console.log(`Department ${dept} added to Realtime Database`);
-  } catch (error) {
-    console.error("Error:", error);
-    res.status(500).json({ error: error.message });
-  }
-});
-app.get("/departments", async (req, res) => {
+  app.post("/addDept", async (req, res) => {
     try {
-        const snapshot = await database.ref('/departments').once('value');
-        const data = snapshot.val();
-        const departments = Object.values(data || {});
-        res.json(departments);
+      const { dept } = req.body;
+  
+      // Add the new department to the Realtime Database without the "name" attribute
+      const departmentRef = database.ref("/departments").child(dept);
+      await departmentRef.set({
+        semesters: { // Add a semesters node under each department
+          1: { name: "Semester 1" },
+          2: { name: "Semester 2" },
+          3: { name: "Semester 3" },
+          4: { name: "Semester 4" },
+          5: { name: "Semester 5" },
+          6: { name: "Semester 6" },
+        },
+      });
+  
+      console.log(`Department ${dept} added to Realtime Database`);
     } catch (error) {
-        console.error('Error:', error);
-        res.status(500).json({ error: error.message });
+      console.error("Error:", error);
+      res.status(500).json({ error: error.message });
     }
-});
-
+  });
+  
+  // ... (other routes)
+  
+  app.get("/departments", async (req, res) => {
+    try {
+      const snapshot = await database.ref('/departments').once('value');
+      const data = snapshot.val();
+      const departments = Object.keys(data || {});
+      res.json(departments);
+    } catch (error) {
+      console.error('Error:', error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+  
+  app.get("/departments/:dept", async (req, res) => {
+    try {
+      const deptName = req.params.dept;
+      const snapshot = await database.ref(`/departments/${deptName}`).once('value');
+      const department = snapshot.val();
+  
+      if (department) {
+        // Extract semester names and details from the semesters node
+        const semesters = Object.keys(department.semesters || {});
+        res.json(semesters);
+      } else {
+        res.json([]); // Return an empty array if the department is not found
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+  
+  
   
 app.listen(3000, () => {
     console.log(`Server is running at port http://localhost:${port}`);

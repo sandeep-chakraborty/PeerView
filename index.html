@@ -34,13 +34,9 @@
 
         <div class="form-group">
           <label for="sem">Semester:</label>
-          <input
-            type="text"
-            class="form-control"
-            name="sem"
-            id="sem"
-            required
-          />
+          <select class="form-control" id="sem" name="sem" required>
+            <!-- Semester options will be added dynamically -->
+          </select>
         </div>
 
         <div class="form-group">
@@ -66,37 +62,53 @@
         </div>
 
         <button type="submit" class="btn btn-primary">Upload PDF</button>
-        <button
-          onclick="window.location.href = 'http://localhost:3000/dept';"
-          class="btn btn-primary"
-        >
-          Add departmenr
-        </button>
-        <button
-          onclick="window.location.href = 'http://localhost:3000/view';"
-          class="btn btn-primary"
-        >
-          View Papers
-        </button>
+        <a href="http://localhost:3000/dept" class="btn btn-primary">Add Department</a>
+        <a href="http://localhost:3000/view" class="btn btn-primary">View Papers</a>
       </form>
     </div>
     <script>
-      // Fetch department names and populate the dropdown list
-      fetch("/departments")
-        .then((response) => response.json())
-        .then((departments) => {
-          const deptDropdown = document.getElementById("dept");
-
-          // Add each department as an option in the dropdown
-          departments.forEach((department) => {
-            const option = document.createElement("option");
-            option.value = department.name;
-            option.text = department.name;
-            deptDropdown.add(option);
-          });
-        })
-        .catch((error) => console.error("Error fetching departments:", error));
+        document.addEventListener("DOMContentLoaded", async function () {
+            // Fetch departments from the server
+            const response = await fetch('/departments');
+            const departments = await response.json();
+    
+            // Populate the department dropdown
+            const deptDropdown = document.getElementById('dept');
+            departments.forEach(department => {
+                const option = document.createElement('option');
+                option.value = department.name;
+                option.text = department.name;
+                deptDropdown.add(option);
+            });
+    
+            // Fetch and populate semesters for the default department
+            updateSemesters();
+        });
+    
+        // Function to update semesters dropdown based on the selected department
+        async function updateSemesters() {
+            const selectedDept = document.getElementById('dept').value;
+    
+            // Fetch semesters for the selected department
+            const response = await fetch(`/departments/${selectedDept}`);
+            const semesters = await response.json();
+    
+            // Populate the semesters dropdown
+            const semDropdown = document.getElementById('sem');
+            semDropdown.innerHTML = ''; // Clear previous options
+    
+            semesters.forEach(semester => {
+                const option = document.createElement('option');
+                option.value = semester.name;
+                option.text = semester.name;
+                semDropdown.add(option);
+            });
+        }
+    
+        // Add the onchange attribute to the department dropdown
+        document.getElementById('dept').onchange = updateSemesters;
     </script>
+    
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
   </body>
 </html>
