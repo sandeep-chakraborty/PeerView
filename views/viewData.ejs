@@ -103,7 +103,7 @@
           <div class="modal-body">
             <!-- Form for editing paper details -->
             <form id="editForm" method="post" action="/edit">
-              <!-- Hidden input for _method -->
+             
               <input type="hidden" name="_method" value="PUT" />
 
               <!-- Hidden input for paperName -->
@@ -207,6 +207,22 @@
           const selectedDept = this.value;
           // Populate subject dropdown based on the selected department
           populateSubjects(selectedDept);
+        });
+
+        // Event listener for when the edit button is clicked
+        $('#editModal').on('show.bs.modal', function (event) {
+          var button = $(event.relatedTarget); // Button that triggered the modal
+          var paperName = button.data('papername'); // Extract info from data-* attributes
+          var dept = button.data('dept');
+          var subject = button.data('subject');
+          var sem = button.data('sem');
+          var year = button.data('year');
+          var modal = $(this);
+          modal.find('#editPaperName').val(paperName); // Set the value of hidden input
+          modal.find('#editDept').val(dept); // Set the value of department dropdown
+          modal.find('#editSubject').val(subject); // Set the value of subject dropdown
+          modal.find('#editSem').val(sem); // Set the value of semester input
+          modal.find('#editYear').val(year); // Set the value of year input
         });
       });
     </script>
