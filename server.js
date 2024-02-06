@@ -383,6 +383,59 @@ app.post("/deleteSubject", async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+app.delete("/deleteDepartments/:deptName", async (req, res) => {
+  try {
+    const deptName = req.params.deptName;
+
+    // Check if the department exists
+    const deptSnapshot = await database
+      .ref(`/departments/${deptName}`)
+      .once("value");
+    const department = deptSnapshot.val();
+
+    if (!department) {
+      return res.status(404).json({ error: "Department not found" });
+    }
+
+    // Check if the department has associated subjects
+    const subjectsSnapshot = await database
+      .ref(`/subjects/${deptName}`)
+      .once("value");
+    const subjects = subjectsSnapshot.val();
+
+    if (subjects) {
+      // Delete associated subjects
+      await Promise.all(
+        Object.keys(subjects).map(async (subjectKey) => {
+          const subjectDeptSnapshot = await database
+            .ref(`/subjects/${deptName}/${subjectKey}/department`)
+            .once("value");
+          const subjectDept = subjectDeptSnapshot.val();
+
+          if (subjectDept === deptName) {
+            // Only delete the subject if it belongs to the specified department
+            await database.ref(`/subjects/${deptName}/${subjectKey}`).remove();
+            console.log(
+              `Subject ${subjectKey} deleted from department ${deptName}`
+            );
+          }
+        })
+      );
+    }
+
+    // Delete the department from Firebase Realtime Database
+    await database.ref(`/departments/${deptName}`).remove();
+
+    // Delete the department from the subjects object
+    await database.ref(`/subjects/${deptName}`).remove();
+
+    console.log(`Department ${deptName} deleted from Realtime Database.`);
+    res.status(200).send(`Department ${deptName} deleted successfully.`);
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
 
 app.listen(3000, () => {
   console.log(`Server is running at port http://localhost:${port}`);
