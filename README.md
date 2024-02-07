@@ -1,3 +1,4 @@
+#PeerView Admin
 <h2>🛠️ Installation Steps:</h2>
 
 <p>1. Cloning this repository</p>
@@ -20,7 +21,7 @@ npm i -u
 node server.js
 ```
 
-<p>5. Go to loclhost:3000 and upload the paper and do other operation 👍</p>
+<p>5. Go to localhost:3000 and upload the paper and do other operation 👍</p>
 
   
   
