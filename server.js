@@ -193,6 +193,12 @@ app.post("/addDept", async (req, res) => {
   try {
     const { dept } = req.body;
 
+    // Check if the department already exists in the database
+    const departmentSnapshot = await database.ref("/departments").child(dept).once("value");
+    if (departmentSnapshot.exists()) {
+      return res.status(400).send(`Department ${dept} already exists`);
+    }
+
     // Add the new department to the Realtime Database under the 'departments' node
     const departmentRef = database.ref("/departments").child(dept);
     await departmentRef.set({
@@ -206,6 +212,7 @@ app.post("/addDept", async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+
 app.get("/departments", async (req, res) => {
   try {
     const snapshot = await database.ref("/departments").once("value");

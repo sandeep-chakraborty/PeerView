@@ -8,6 +8,10 @@
             rel="stylesheet"
             href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
         />
+        <link
+    href="https://cdn.jsdelivr.net/npm/remixicon@4.1.0/fonts/remixicon.css"
+    rel="stylesheet"
+/>
         <style>
             body {
                 background-color: #f8f9fa;
@@ -43,6 +47,8 @@
     <body>
         <div class="container">
             <h1>PeerView admin base</h1>
+            <button id="refreshButton" class="btn btn-primary m-3 float-right "><i class="ri-refresh-line"></i> Refresh this page</button>
+
             <form action="/upload" method="post" enctype="multipart/form-data">
                 <div class="form-group custom-file">
                     <label class="custom-file-label" for="pdf">Choose PDF:</label>
@@ -215,6 +221,9 @@
                     alert.remove();
                 }, 5000); // Adjust the timeout as needed
             }
+            document.getElementById("refreshButton").addEventListener("click", function() {
+            location.reload(); // Reload the page
+        });
         </script>
 
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
