@@ -17,7 +17,7 @@ app.use(express.static("public"));
 app.set("view engine", "ejs");
 
 app.get("/", (req, res) => {
-  res.sendFile(__dirname + "/index.html");
+  res.sendFile(__dirname + "/src/index.html");
 });
 
 app.post("/upload", upload.single("pdf"), async (req, res) => {
@@ -186,7 +186,7 @@ app.put("/edit", async (req, res) => {
   }
 });
 app.get("/dept", (req, res) => {
-  res.sendFile(__dirname + "/addDept.html");
+  res.sendFile(__dirname + "/src/addDept.html");
 });
 
 app.post("/addDept", async (req, res) => {
@@ -264,7 +264,7 @@ app.get("/departments/:dept", async (req, res) => {
 // Add a new route to handle subject addition
 // Add a route to render addSub.html
 app.get("/addSub", (req, res) => {
-  res.sendFile(__dirname + "/addSub.html");
+  res.sendFile(__dirname + "/src/addSub.html");
 });
 app.post("/addSubject", async (req, res) => {
   try {
