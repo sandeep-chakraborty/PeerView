@@ -6,6 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>View Departments</title>
     <!-- Include Bootstrap CSS link -->
+    <link
+    href="https://cdn.jsdelivr.net/npm/remixicon@4.1.0/fonts/remixicon.css"
+    rel="stylesheet"
+/>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
@@ -44,6 +48,7 @@
 <body>
     <div class="container mt-4">
         <h1 class="mb-4">Departments</h1>
+        <button id="refreshButton" class="btn btn-primary m-3 float-right "><i class="ri-refresh-line"></i> Refresh this page</button>
 
         <table class="table table-bordered">
             <thead class="thead-light">
@@ -100,6 +105,9 @@
                 });
             }
         }
+        document.getElementById("refreshButton").addEventListener("click", function() {
+            location.reload(); // Reload the page
+        });
     </script>
 </body>
 

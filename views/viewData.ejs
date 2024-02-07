@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>View Papers</title>
+    <link
+    href="https://cdn.jsdelivr.net/npm/remixicon@4.1.0/fonts/remixicon.css"
+    rel="stylesheet"
+/>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
         body {
@@ -32,6 +36,7 @@
 <body>
     <div class="container-md mt-5">
         <h1>View Papers</h1>
+        <button id="refreshButton" class="btn btn-primary m-3 float-right "><i class="ri-refresh-line"></i> Refresh this page</button>
         <table class="table table-bordered">
             <thead class="thead-dark">
                 <tr>
@@ -84,6 +89,9 @@
                 <% }); %>
             </tbody>
         </table>
+        <div class="footer">
+            Powered by SRP🚀
+        </div>
     </div>
 
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
@@ -161,12 +169,11 @@
                     </form>
                 </div>
             </div>
+            
         </div>
-     
+       
     </div>
-    <div class="footer">
-      Powered by SRP🚀
-  </div>
+   
     <script>
         document.addEventListener("DOMContentLoaded", async function () {
             const deptDropdown = document.getElementById("editDept");
@@ -208,6 +215,9 @@
                 modal.find('#editSem').val(sem);
                 modal.find('#editYear').val(year);
             });
+        });
+        document.getElementById("refreshButton").addEventListener("click", function() {
+            location.reload(); // Reload the page
         });
     </script>
 </body>
