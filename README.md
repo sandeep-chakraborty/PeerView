@@ -1,4 +1,4 @@
-#PeerView Admin
+<h1 align="center" id="title">PeerView Admin</h1>
 <h2>🛠️ Installation Steps:</h2>
 
 <p>1. Cloning this repository</p>
