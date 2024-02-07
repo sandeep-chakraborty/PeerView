@@ -275,9 +275,17 @@ app.post("/addSubject", async (req, res) => {
       return res.status(400).json({ error: "Department is required" });
     }
 
-    // Fetch the current count of subjects for the selected department
+    // Fetch the current subjects for the selected department
     const snapshot = await database.ref(`/subjects/${dept}`).once("value");
     const subjects = snapshot.val() || {};
+
+    // Check if the subject already exists in the department
+    const existingSubjects = Object.values(subjects);
+    if (existingSubjects.includes(subjectName)) {
+      return res.status(400).json({ error: "Subject already exists in the department" });
+    }
+
+    // Calculate the count of subjects for the selected department
     const subjectCount = Object.keys(subjects).length + 1;
 
     // Create a new subject key-value pair under the selected department
@@ -299,7 +307,7 @@ app.post("/addSubject", async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
-// ... (existing code)
+
 
 // Add a new route to handle subjects for a specific department
 app.get("/subjects/:dept", async (req, res) => {

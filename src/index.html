@@ -183,29 +183,36 @@
             });
     
             document.querySelector("form").addEventListener("submit", async function(event) {
-                event.preventDefault(); // Prevent default form submission
-                const formData = new FormData(this);
-    
-                try {
-                    // Send the form data to the server
-                    const response = await fetch("/upload", {
-                        method: "POST",
-                        body: formData
-                    });
-    
-                    if (response.ok) {
-                        // If the response is successful, show a success alert
-                        showAlert("success", "Paper uploaded successfully!");
-                    } else {
-                        // If the response is not successful, show an error alert
-                        showAlert("danger", "Failed to upload paper.");
-                    }
-                } catch (error) {
-                    console.error("Error:", error);
-                    // Show an error alert if there's an error during the request
-                    showAlert("danger", "An error occurred. Please try again later.");
-                }
+        event.preventDefault(); // Prevent default form submission
+        const formData = new FormData(this);
+        const semester = formData.get("sem");
+
+        // Add validation for semester not greater than 8
+        if (parseInt(semester) > 8) {
+            showAlert("danger", "Semester cannot be greater than 8!");
+            return; // Stop further execution
+        }
+
+        try {
+            // Send the form data to the server
+            const response = await fetch("/upload", {
+                method: "POST",
+                body: formData
             });
+
+            if (response.ok) {
+                // If the response is successful, show a success alert
+                showAlert("success", "Paper uploaded successfully!");
+            } else {
+                // If the response is not successful, show an error alert
+                showAlert("danger", "Failed to upload paper.");
+            }
+        } catch (error) {
+            console.error("Error:", error);
+            // Show an error alert if there's an error during the request
+            showAlert("danger", "An error occurred. Please try again later.");
+        }
+    });
     
             function showAlert(type, message) {
                 // Create the alert element
