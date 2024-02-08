@@ -22,7 +22,7 @@ app.get("/", (req, res) => {
 
 app.post("/upload", upload.single("pdf"), async (req, res) => {
   const { originalname, buffer } = req.file;
-  const { dept, sem, year, subject } = req.body;
+  const { dept, sem, year, subject,stream: selectedStream } = req.body; // Include 'stream' from form data
   const PaperName = `${dept}-${sem}-${subject}-${year}`;
   const fileName = originalname;
 
@@ -54,6 +54,7 @@ app.post("/upload", upload.single("pdf"), async (req, res) => {
           paperUrl: downloadURL,
           subject: subject,
           year: year,
+          course: selectedStream // Include the stream in the fileData
         };
 
         // Save data to Realtime Database with PaperName as the key
@@ -75,6 +76,8 @@ app.post("/upload", upload.single("pdf"), async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+
+
 
 app.get("/view", async (req, res) => {
   try {
@@ -427,6 +430,55 @@ app.post("/deleteSubject", async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+// Add a route to render addStream.html
+app.get("/addStream", (req, res) => {
+  res.sendFile(__dirname + "/src/addStream.html");
+});
+
+// Add a new route to handle stream addition
+app.post("/addStream", async (req, res) => {
+  try {
+    const { streamName } = req.body;
+
+    // Check if streamName is defined and has a value
+    if (!streamName || streamName.trim() === "") {
+      return res.send(
+        "<script>alert('Stream Name is required');</script>"
+      );
+    }
+
+    // Add the new stream to the Realtime Database under the 'streams' node
+    const streamRef = database.ref("/streams").child(streamName);
+    await streamRef.set({
+      name: streamName,
+    });
+
+    console.log(`Stream ${streamName} added to Realtime Database`);
+    res.send(
+      `<script>alert('Stream ${streamName} added successfully');</script>`
+    );
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+// Add a new route to handle fetching stream names
+app.get('/streams', (req, res) => {
+  // Assuming 'streams' is a child node containing stream names
+  database.ref('streams').once('value', (snapshot) => {
+    const streams = snapshot.val();
+    if (streams) {
+      res.json(Object.keys(streams)); // Sending an array of stream names
+    } else {
+      res.status(404).send('Streams not found');
+    }
+  }).catch(error => {
+    console.error('Error fetching streams:', error);
+    res.status(500).send('Internal server error');
+  });
+});;
+
+
 
 app.listen(3000, () => {
   console.log(`Server is running at port http://localhost:${port}`);

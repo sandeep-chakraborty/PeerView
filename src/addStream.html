@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add New Stream</title>
+    <!-- Bootstrap CSS -->
+    <style>
+          body {
+            background-color: #f8f9fa;
+            padding-top: 50px;
+        }
+
+        .container {
+            background-color: #ffffff;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+        }
+
+        h2 {
+            margin-top: 0;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .footer {
+                text-align: center;
+                margin-top: 30px;
+            }
+    </style>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container">
+        <h1 class="mt-5">Add New Stream</h1>
+        <form action="/addStream" method="POST">
+            <div class="form-group">
+                <label for="streamName">Stream Name:</label>
+                <input type="text" class="form-control" id="streamName" name="streamName" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Add Stream</button>
+        </form>
+        <div class="footer">
+            Powered by SRP🚀
+        </div>
+    </div>
+    <!-- Bootstrap JS -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

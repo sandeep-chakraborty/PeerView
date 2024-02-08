@@ -62,7 +62,13 @@
                         onchange="updateFileName(this)"
                     />
                 </div>
-
+                <div class="form-group">
+                    <label for="stream">Stream:</label>
+                    <select class="form-control" name="stream" id="stream" required>
+                        <!-- Streams will be dynamically loaded here using JavaScript -->
+                    </select>
+                </div>
+                
                 <div class="form-group">
                     <label for="dept">Department:</label>
                     <select class="form-control" name="dept" id="dept" required>
@@ -112,6 +118,9 @@
                 <a href="http://localhost:3000/addSub" class="btn btn-success"
                     >Add Subject</a
                 >
+                <a href="http://localhost:3000/addStream" class="btn btn-success"
+                >Add a new stream</a
+            >
                 <a href="http://localhost:3000/viewDepts" class="btn btn-danger"
                     >View and Delete Departments</a
                 >
@@ -173,6 +182,29 @@
                 const initialSelectedDept = deptDropdown.value;
                 await populateSubjects(initialSelectedDept);
             });
+            document.addEventListener("DOMContentLoaded", async function () {
+        const streamDropdown = document.getElementById("stream");
+
+        // Fetch stream names from the backend
+        try {
+            const streamsResponse = await fetch("/streams");
+            if (!streamsResponse.ok) {
+                throw new Error("Failed to fetch streams");
+            }
+            const streams = await streamsResponse.json();
+
+            // Populate the Stream dropdown with fetched stream names
+            streams.forEach(streamName => {
+                const option = document.createElement("option");
+                option.value = streamName;
+                option.textContent = streamName;
+                streamDropdown.appendChild(option);
+            });
+        } catch (error) {
+            console.error("Error fetching streams:", error);
+            // Handle error fetching streams
+        }
+    });
         </script>
         <script>
             document.getElementById("pdf").addEventListener("change", function(event) {
