@@ -40,11 +40,13 @@
         <table class="table table-bordered">
             <thead class="thead-dark">
                 <tr>
+                    <th>Stream</th>
                     <th>Department</th>
                     <th>Semester</th>
                     <th>Paper Name</th>
                     <th>Subject</th>
                     <th>Year</th>
+                   
                     <th>View PDF</th>
                     <th>Edit</th>
                     <th>Delete</th>
@@ -53,11 +55,13 @@
             <tbody id="papersTableBody">
                 <% papers.forEach(paper => { %>
                 <tr>
+                    <td><%= paper.course %></td>
                     <td><%= paper.dept %></td>
                     <td><%= paper.sem %></td>
                     <td><%= paper.paperName %></td>
                     <td><%= paper.subject %></td>
                     <td><%= paper.year %></td>
+                    <!-- Cell for Stream -->
                     <td>
                         <a href="<%= paper.paperUrl %>" target="_blank">View PDF</a>
                     </td>
@@ -98,124 +102,9 @@
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
-    <div
-        class="modal fade"
-        id="editModal"
-        tabindex="-1"
-        role="dialog"
-        aria-labelledby="editModalLabel"
-        aria-hidden="true"
-    >
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="editModalLabel">Edit Paper</h5>
-                    <button
-                        type="button"
-                        class="close"
-                        data-dismiss="modal"
-                        aria-label="Close"
-                    >
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <form id="editForm" method="post" action="/edit">
-                        <input type="hidden" name="_method" value="PUT" />
-                        <input
-                            type="hidden"
-                            id="editPaperName"
-                            name="paperName"
-                            value=""
-                        />
-                        <div class="form-group">
-                            <label for="editDept">Department:</label>
-                            <select class="form-control" id="editDept" name="dept" required>
-                                <!-- Department options will be added dynamically using JavaScript -->
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="editSubject">Subject:</label>
-                            <select
-                                class="form-control"
-                                id="editSubject"
-                                name="subject"
-                                required
-                            >
-                                <!-- Subject options will be added dynamically using JavaScript -->
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="editSem">Semester:</label>
-                            <input
-                                type="text"
-                                class="form-control"
-                                id="editSem"
-                                name="sem"
-                                required
-                            />
-                        </div>
-                        <div class="form-group">
-                            <label for="editYear">Year:</label>
-                            <input
-                                type="text"
-                                class="form-control"
-                                id="editYear"
-                                name="year"
-                                required
-                            />
-                        </div>
-                        <button type="submit" class="btn btn-primary">Save Changes</button>
-                    </form>
-                </div>
-            </div>
-            
-        </div>
-       
-    </div>
-   
     <script>
-        document.addEventListener("DOMContentLoaded", async function () {
-            const deptDropdown = document.getElementById("editDept");
-            const subjectDropdown = document.getElementById("editSubject");
-            const departmentsResponse = await fetch("/departments");
-            const departments = await departmentsResponse.json();
-            departments.forEach((department) => {
-                const option = document.createElement("option");
-                option.value = department.name;
-                option.text = department.name;
-                deptDropdown.add(option);
-            });
-            async function populateSubjects(selectedDept) {
-                const subjectsResponse = await fetch(`/subjects/${selectedDept}`);
-                const subjects = await subjectsResponse.json();
-                subjectDropdown.innerHTML = "";
-                Object.entries(subjects).forEach(([key, value]) => {
-                    const option = document.createElement("option");
-                    option.value = value;
-                    option.text = value;
-                    subjectDropdown.add(option);
-                });
-            }
-            deptDropdown.addEventListener("change", function () {
-                const selectedDept = this.value;
-                populateSubjects(selectedDept);
-            });
-            $('#editModal').on('show.bs.modal', function (event) {
-                var button = $(event.relatedTarget);
-                var paperName = button.data('papername');
-                var dept = button.data('dept');
-                var subject = button.data('subject');
-                var sem = button.data('sem');
-                var year = button.data('year');
-                var modal = $(this);
-                modal.find('#editPaperName').val(paperName);
-                modal.find('#editDept').val(dept);
-                modal.find('#editSubject').val(subject);
-                modal.find('#editSem').val(sem);
-                modal.find('#editYear').val(year);
-            });
-        });
+    
+
         document.getElementById("refreshButton").addEventListener("click", function() {
             location.reload(); // Reload the page
         });
