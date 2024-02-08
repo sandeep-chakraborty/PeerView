@@ -209,7 +209,9 @@ app.post("/addDept", async (req, res) => {
     });
 
     console.log(`Department ${dept} added to Realtime Database`);
-    res.status(200).send(`Department ${dept} added to Realtime Database`);
+    res.send(
+      `<script>alert('Department ${dept} added to Realtime databse');</script>`
+    );
   } catch (error) {
     console.error("Error:", error);
     res.status(500).json({ error: error.message });
@@ -477,7 +479,38 @@ app.get('/streams', (req, res) => {
     res.status(500).send('Internal server error');
   });
 });;
+app.get("/stream", async (req, res) => {
+  try {
+    // Fetch stream names from Firebase Realtime Database
+    const snapshot = await database.ref("streams").once("value");
+    const streams = snapshot.val();
 
+    if (streams) {
+      // Render stream.ejs and pass stream data to it
+      res.render("stream", { streams: Object.keys(streams) });
+    } else {
+      res.render("stream", { streams: [] }); // Render with empty array if no streams found
+    }
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).send("Internal Server Error");
+  }
+});
+// Route to handle stream deletion
+app.delete("/stream/:streamName", async (req, res) => {
+  try {
+    const streamName = req.params.streamName;
+
+    // Delete the stream from Firebase Realtime Database
+    await database.ref(`/streams/${streamName}`).remove();
+
+    console.log(`Stream ${streamName} deleted from Realtime Database.`);
+    res.sendStatus(204); // Redirect to the stream page after deletion
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).send("Internal Server Error");
+  }
+});
 
 
 app.listen(3000, () => {

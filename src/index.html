@@ -1,270 +1,291 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>PeerviewAdmin Panel</title>
-        <link
-            rel="stylesheet"
-            href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
-        />
-        <link
-    href="https://cdn.jsdelivr.net/npm/remixicon@4.1.0/fonts/remixicon.css"
-    rel="stylesheet"
-/>
-        <style>
-            body {
-                background-color: #f8f9fa;
-                padding-top: 50px;
-            }
-            .container {
-                background-color: #ffffff;
-                border-radius: 10px;
-                padding: 30px;
-                box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-            }
-            h1 {
-                margin-bottom: 30px;
-                text-align: center;
-            }
-            .form-group {
-                margin-bottom: 20px;
-            }
-            .custom-file-label {
-                overflow: hidden;
-                white-space: nowrap;
-                text-overflow: ellipsis;
-            }
-            .btn-primary {
-                margin-right: 10px;
-            }
-            .footer {
-                text-align: center;
-                margin-top: 30px;
-            }
-        </style>
-    </head>
-    <body>
-        <div class="container">
-            <h1>Peerview Admin base</h1>
-            <button id="refreshButton" class="btn btn-primary m-3 float-right "><i class="ri-refresh-line"></i> Refresh this page</button>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PeerviewAdmin Panel</title>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/remixicon@4.1.0/fonts/remixicon.css"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        background-color: #f8f9fa;
+        padding-top: 50px;
+      }
+      .container {
+        background-color: #ffffff;
+        border-radius: 10px;
+        padding: 30px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+      }
+      h1 {
+        margin-bottom: 30px;
+        text-align: center;
+      }
+      .form-group {
+        margin-bottom: 20px;
+      }
+      .custom-file-label {
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+      }
+      .btn-primary {
+        margin-right: 10px;
+      }
+      .footer {
+        text-align: center;
+        margin-top: 30px;
+      }
+      .button-container {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr); /* Three grids per row */
+        gap: 10px; /* Adjust gap between buttons as needed */
+        justify-items: center;
+        margin-top: 20px; /* Adjust margin as needed */
+      }
 
-            <form action="/upload" method="post" enctype="multipart/form-data">
-                <div class="form-group custom-file">
-                    <label class="custom-file-label" for="pdf">Choose PDF:</label>
-                    <input
-                        type="file"
-                        class="custom-file-input"
-                        name="pdf"
-                        id="pdf"
-                        accept=".pdf"
-                        required
-                        onchange="updateFileName(this)"
-                    />
-                </div>
-                <div class="form-group">
-                    <label for="stream">Stream:</label>
-                    <select class="form-control" name="stream" id="stream" required>
-                        <!-- Streams will be dynamically loaded here using JavaScript -->
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <label for="dept">Department:</label>
-                    <select class="form-control" name="dept" id="dept" required>
-                        <!-- Departments will be dynamically loaded here using JavaScript -->
-                    </select>
-                </div>
+      .button-container a {
+        width: 100%; /* Ensure buttons take up full width of their container */
+      }
+      .view-papers {
+        grid-column: span 3; /* Make this button span all three columns */
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Peerview Admin base</h1>
+      <button id="refreshButton" class="btn btn-primary m-3 float-right">
+        <i class="ri-refresh-line"></i> Refresh this page
+      </button>
 
-                <div class="form-group">
-                    <label for="sem">Semester:</label>
-                    <input
-                        type="text"
-                        class="form-control"
-                        id="sem"
-                        name="sem"
-                        required
-                    />
-                </div>
-
-                <div class="form-group">
-                    <label for="subject">Subject:</label>
-                    <select class="form-control" name="subject" id="subject" required>
-                        <!-- Subjects will be dynamically loaded here using JavaScript -->
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label for="year">Year:</label>
-                    <input
-                        type="text"
-                        class="form-control"
-                        name="year"
-                        id="year"
-                        required
-                    />
-                </div>
-
-                <button type="submit" class="btn btn-primary">Upload PDF</button>
-                
-            </form>
-
-            <hr />
-
-            <div class="text-center">
-                <a href="http://localhost:3000/dept" class="btn btn-success"
-                    >Add Department</a
-                >
-                <a href="http://localhost:3000/addSub" class="btn btn-success"
-                    >Add Subject</a
-                >
-                <a href="http://localhost:3000/addStream" class="btn btn-success"
-                >Add a new stream</a
-            >
-                <a href="http://localhost:3000/viewDepts" class="btn btn-danger"
-                    >View and Delete Departments</a
-                >
-                <a href="http://localhost:3000/viewSub" class="btn btn-danger"
-                    >View and Delete Subjects</a
-                >
-                <a href="http://localhost:3000/view" class="btn btn-primary"
-                    >View Papers</a
-                >
-            </div>
-
-            <div class="footer">
-                Powered by SRP🚀
-            </div>
+      <form action="/upload" method="post" enctype="multipart/form-data">
+        <div class="form-group custom-file">
+          <label class="custom-file-label" for="pdf">Choose PDF:</label>
+          <input
+            type="file"
+            class="custom-file-input"
+            name="pdf"
+            id="pdf"
+            accept=".pdf"
+            required
+            onchange="updateFileName(this)"
+          />
+        </div>
+        <div class="form-group">
+          <label for="stream">Stream:</label>
+          <select class="form-control" name="stream" id="stream" required>
+            <!-- Streams will be dynamically loaded here using JavaScript -->
+          </select>
         </div>
 
-        <script>
-            function updateFileName(input) {
-                const fileName = input.files[0].name;
-                const label = document.querySelector(".custom-file-label");
-                label.textContent = fileName;
-            }
-        </script>
+        <div class="form-group">
+          <label for="dept">Department:</label>
+          <select class="form-control" name="dept" id="dept" required>
+            <!-- Departments will be dynamically loaded here using JavaScript -->
+          </select>
+        </div>
 
-        <script>
-            document.addEventListener("DOMContentLoaded", async function () {
-                const deptDropdown = document.getElementById("dept");
-                const subjectDropdown = document.getElementById("subject");
+        <div class="form-group">
+          <label for="sem">Semester:</label>
+          <input
+            type="text"
+            class="form-control"
+            id="sem"
+            name="sem"
+            required
+          />
+        </div>
 
-                const departmentsResponse = await fetch("/departments");
-                const departments = await departmentsResponse.json();
+        <div class="form-group">
+          <label for="subject">Subject:</label>
+          <select class="form-control" name="subject" id="subject" required>
+            <!-- Subjects will be dynamically loaded here using JavaScript -->
+          </select>
+        </div>
 
-                departments.forEach((department) => {
-                    const option = document.createElement("option");
-                    option.value = department.name;
-                    option.text = department.name;
-                    deptDropdown.add(option);
-                });
+        <div class="form-group">
+          <label for="year">Year:</label>
+          <input
+            type="text"
+            class="form-control"
+            name="year"
+            id="year"
+            required
+          />
+        </div>
 
-                async function populateSubjects(selectedDept) {
-                    const subjectsResponse = await fetch(`/subjects/${selectedDept}`);
-                    const subjects = await subjectsResponse.json();
+        <button type="submit" class="btn btn-primary">Upload PDF</button>
+      </form>
 
-                    subjectDropdown.innerHTML = "";
+      <hr />
 
-                    Object.entries(subjects).forEach(([key, value]) => {
-                        const option = document.createElement("option");
-                        option.value = value;
-                        option.text = value;
-                        subjectDropdown.add(option);
-                    });
-                }
+      <div class="button-container">
+        <a href="http://localhost:3000/dept" class="btn btn-success"
+          >Add Department</a
+        >
+        <a href="http://localhost:3000/addSub" class="btn btn-success"
+          >Add Subject</a
+        >
+        <a href="http://localhost:3000/addStream" class="btn btn-success"
+          >Add a new stream</a
+        >
+        <a href="http://localhost:3000/viewDepts" class="btn btn-danger"
+          >View and Delete Departments</a
+        >
+        <a href="http://localhost:3000/viewSub" class="btn btn-danger"
+          >View and Delete Subjects</a
+        >
+        <a href="http://localhost:3000/stream" class="btn btn-danger"
+          >View and Delete Streams</a
+        >
+        <a href="http://localhost:3000/view" class="btn btn-primary view-papers"
+          >View Papers</a
+        >
+      </div>
+      <div class="footer">Powered by SRP🚀</div>
+    </div>
 
-                deptDropdown.addEventListener("change", async function () {
-                    const selectedDept = deptDropdown.value;
-                    await populateSubjects(selectedDept);
-                });
+    <script>
+      function updateFileName(input) {
+        const fileName = input.files[0].name;
+        const label = document.querySelector(".custom-file-label");
+        label.textContent = fileName;
+      }
+    </script>
 
-                const initialSelectedDept = deptDropdown.value;
-                await populateSubjects(initialSelectedDept);
-            });
-            document.addEventListener("DOMContentLoaded", async function () {
+    <script>
+      document.addEventListener("DOMContentLoaded", async function () {
+        const deptDropdown = document.getElementById("dept");
+        const subjectDropdown = document.getElementById("subject");
+
+        const departmentsResponse = await fetch("/departments");
+        const departments = await departmentsResponse.json();
+
+        departments.forEach((department) => {
+          const option = document.createElement("option");
+          option.value = department.name;
+          option.text = department.name;
+          deptDropdown.add(option);
+        });
+
+        async function populateSubjects(selectedDept) {
+          const subjectsResponse = await fetch(`/subjects/${selectedDept}`);
+          const subjects = await subjectsResponse.json();
+
+          subjectDropdown.innerHTML = "";
+
+          Object.entries(subjects).forEach(([key, value]) => {
+            const option = document.createElement("option");
+            option.value = value;
+            option.text = value;
+            subjectDropdown.add(option);
+          });
+        }
+
+        deptDropdown.addEventListener("change", async function () {
+          const selectedDept = deptDropdown.value;
+          await populateSubjects(selectedDept);
+        });
+
+        const initialSelectedDept = deptDropdown.value;
+        await populateSubjects(initialSelectedDept);
+      });
+      document.addEventListener("DOMContentLoaded", async function () {
         const streamDropdown = document.getElementById("stream");
 
         // Fetch stream names from the backend
         try {
-            const streamsResponse = await fetch("/streams");
-            if (!streamsResponse.ok) {
-                throw new Error("Failed to fetch streams");
-            }
-            const streams = await streamsResponse.json();
+          const streamsResponse = await fetch("/streams");
+          if (!streamsResponse.ok) {
+            throw new Error("Failed to fetch streams");
+          }
+          const streams = await streamsResponse.json();
 
-            // Populate the Stream dropdown with fetched stream names
-            streams.forEach(streamName => {
-                const option = document.createElement("option");
-                option.value = streamName;
-                option.textContent = streamName;
-                streamDropdown.appendChild(option);
-            });
+          // Populate the Stream dropdown with fetched stream names
+          streams.forEach((streamName) => {
+            const option = document.createElement("option");
+            option.value = streamName;
+            option.textContent = streamName;
+            streamDropdown.appendChild(option);
+          });
         } catch (error) {
-            console.error("Error fetching streams:", error);
-            // Handle error fetching streams
+          console.error("Error fetching streams:", error);
+          // Handle error fetching streams
         }
-    });
-        </script>
-        <script>
-            document.getElementById("pdf").addEventListener("change", function(event) {
-                var fileName = document.getElementById("pdf").value;
-                if(fileName == "") {
-                    showAlert("danger", "No file chosen!");
-                }
-            });
-    
-            document.querySelector("form").addEventListener("submit", async function(event) {
-        event.preventDefault(); // Prevent default form submission
-        const formData = new FormData(this);
-        const semester = formData.get("sem");
+      });
+    </script>
+    <script>
+      document
+        .getElementById("pdf")
+        .addEventListener("change", function (event) {
+          var fileName = document.getElementById("pdf").value;
+          if (fileName == "") {
+            showAlert("danger", "No file chosen!");
+          }
+        });
 
-        // Add validation for semester not greater than 8
-        if (parseInt(semester) > 8) {
+      document
+        .querySelector("form")
+        .addEventListener("submit", async function (event) {
+          event.preventDefault(); // Prevent default form submission
+          const formData = new FormData(this);
+          const semester = formData.get("sem");
+
+          // Add validation for semester not greater than 8
+          if (parseInt(semester) > 8) {
             showAlert("danger", "Semester cannot be greater than 8!");
             return; // Stop further execution
-        }
+          }
 
-        try {
+          try {
             // Send the form data to the server
             const response = await fetch("/upload", {
-                method: "POST",
-                body: formData
+              method: "POST",
+              body: formData,
             });
 
             if (response.ok) {
-                // If the response is successful, show a success alert
-                showAlert("success", "Paper uploaded successfully!");
+              // If the response is successful, show a success alert
+              showAlert("success", "Paper uploaded successfully!");
             } else {
-                // If the response is not successful, show an error alert
-                showAlert("danger", "Failed to upload paper.");
+              // If the response is not successful, show an error alert
+              showAlert("danger", "Failed to upload paper.");
             }
-        } catch (error) {
+          } catch (error) {
             console.error("Error:", error);
             // Show an error alert if there's an error during the request
             showAlert("danger", "An error occurred. Please try again later.");
-        }
-    });
-    
-            function showAlert(type, message) {
-                // Create the alert element
-                const alert = document.createElement("div");
-                alert.classList.add("alert", `alert-${type}`);
-                alert.textContent = message;
-    
-                // Append the alert to the container
-                document.querySelector(".container").appendChild(alert);
-    
-                // Automatically remove the alert after a few seconds
-                setTimeout(() => {
-                    alert.remove();
-                }, 5000); // Adjust the timeout as needed
-            }
-            document.getElementById("refreshButton").addEventListener("click", function() {
-            location.reload(); // Reload the page
+          }
         });
-        </script>
 
-        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    </body>
+      function showAlert(type, message) {
+        // Create the alert element
+        const alert = document.createElement("div");
+        alert.classList.add("alert", `alert-${type}`);
+        alert.textContent = message;
+
+        // Append the alert to the container
+        document.querySelector(".container").appendChild(alert);
+
+        // Automatically remove the alert after a few seconds
+        setTimeout(() => {
+          alert.remove();
+        }, 5000); // Adjust the timeout as needed
+      }
+      document
+        .getElementById("refreshButton")
+        .addEventListener("click", function () {
+          location.reload(); // Reload the page
+        });
+    </script>
+
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  </body>
 </html>
