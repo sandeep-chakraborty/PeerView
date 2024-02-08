@@ -52,7 +52,7 @@
                         <td>
                             <form id="deleteForm_<%= stream %>" action="/stream/<%= stream %>" method="POST">
                                 <input type="hidden" name="_method" value="DELETE">
-                                <button type="button" onclick="deleteStream('<%= stream %>')" class="btn btn-danger">Delete</button>
+                                <button type="button" onclick="deleteStream('<%= stream %>')" class="btn btn-danger"><i class="ri-close-circle-line p-1"></i>Delete</button>
                             </form>
                         </td>
                     </tr>

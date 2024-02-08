@@ -46,7 +46,6 @@
                     <th>Paper Name</th>
                     <th>Subject</th>
                     <th>Year</th>
-                   
                     <th>View PDF</th>
                     <th>Edit</th>
                     <th>Delete</th>
@@ -63,7 +62,7 @@
                     <td><%= paper.year %></td>
                     <!-- Cell for Stream -->
                     <td>
-                        <a href="<%= paper.paperUrl %>" target="_blank">View PDF</a>
+                        <a href="<%= paper.paperUrl %>" target="_blank"><i class="ri-links-line p-1"></i>View PDF</a>
                     </td>
                     <td>
                         <!-- <button
@@ -86,7 +85,7 @@
                             onsubmit="return confirm('Are you sure you want to delete this paper?');"
                         >
                             <input type="hidden" name="_method" value="DELETE" />
-                            <button type="submit" class="btn btn-danger">Delete</button>
+                            <button type="submit" class="btn btn-danger"><i class="ri-close-circle-line p-1"></i>Delete</button>
                         </form>
                     </td>
                 </tr>
