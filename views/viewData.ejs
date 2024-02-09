@@ -36,6 +36,14 @@
 <body>
     <div class="container-md mt-5">
         <h1>View Papers</h1>
+        <div class="input-group mb-3">
+            <input type="text" id="searchInput" class="form-control" placeholder="Search Paper Names, Course, Semester, Year">
+            <div class="input-group-append">
+                <button id="clearButton" class="btn btn-danger" type="button"><i class="ri-close-fill"></i></button>
+                <button id="searchButton" class="btn btn-primary" type="button">Search</button>
+                
+            </div>
+        </div>
         <button id="refreshButton" class="btn btn-primary m-3 float-right "><i class="ri-refresh-line"></i> Refresh this page</button>
         <table class="table table-bordered">
             <thead class="thead-dark">
@@ -102,10 +110,53 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
     <script>
-    
+        // Function to reset table rows to original state
+        function resetTableRows() {
+            var tableRows = document.querySelectorAll("#papersTableBody tr");
+            tableRows.forEach(function(row) {
+                row.style.display = "";
+            });
+        }
 
         document.getElementById("refreshButton").addEventListener("click", function() {
             location.reload(); // Reload the page
+        });
+
+        document.getElementById("searchButton").addEventListener("click", function() {
+            var searchInput = document.getElementById("searchInput").value.toLowerCase();
+            var tableRows = document.querySelectorAll("#papersTableBody tr");
+
+            tableRows.forEach(function(row) {
+                var course = row.querySelector("td:nth-child(1)").innerText.toLowerCase();
+                var paperName = row.querySelector("td:nth-child(4)").innerText.toLowerCase();
+                var sem = row.querySelector("td:nth-child(3)").innerText.toLowerCase();
+                var year = row.querySelector("td:nth-child(6)").innerText.toLowerCase();
+                
+                if (course.includes(searchInput) || paperName.includes(searchInput) || sem.includes(searchInput) || year.includes(searchInput)) {
+                    row.style.display = "";
+                } else {
+                    row.style.display = "none";
+                }
+            });
+        });
+
+        document.getElementById("searchInput").addEventListener("input", function() {
+            resetTableRows(); // Reset table rows to original state
+            document.getElementById("searchButton").click(); // Trigger click event of search button
+        });
+
+        document.getElementById("searchInput").addEventListener("keydown", function(event) {
+            if (event.key === "Enter") {
+                event.preventDefault(); // Prevent form submission
+            } else if (event.key === "Escape") {
+                document.getElementById("clearButton").click(); // Trigger click event of clear button
+            }
+        });
+
+        document.getElementById("clearButton").addEventListener("click", function() {
+            document.getElementById("searchInput").value = ""; // Clear the search input
+            resetTableRows(); // Reset table rows to original state
+            document.getElementById("searchButton").click(); // Trigger click event of search button
         });
     </script>
 </body>
