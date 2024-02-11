@@ -22,7 +22,7 @@ app.get("/", (req, res) => {
 
 app.post("/upload", upload.single("pdf"), async (req, res) => {
   const { originalname, buffer } = req.file;
-  const { dept, sem, year, subject,stream: selectedStream } = req.body; // Include 'stream' from form data
+  const { dept, sem, year, subject, stream: selectedStream } = req.body; // Include 'stream' from form data
   const PaperName = `${dept}-${sem}-${subject}-${year}`;
   const fileName = originalname;
 
@@ -54,7 +54,7 @@ app.post("/upload", upload.single("pdf"), async (req, res) => {
           paperUrl: downloadURL,
           subject: subject,
           year: year,
-          course: selectedStream // Include the stream in the fileData
+          course: selectedStream, // Include the stream in the fileData
         };
 
         // Save data to Realtime Database with PaperName as the key
@@ -76,8 +76,6 @@ app.post("/upload", upload.single("pdf"), async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
-
-
 
 app.get("/view", async (req, res) => {
   try {
@@ -194,29 +192,34 @@ app.get("/dept", (req, res) => {
 
 app.post("/addDept", async (req, res) => {
   try {
-    const { dept } = req.body;
+      const { dept, stream } = req.body;
 
-    // Check if the department already exists in the database
-    const departmentSnapshot = await database.ref("/departments").child(dept).once("value");
-    if (departmentSnapshot.exists()) {
-      return res.status(400).send(`Department ${dept} already exists`);
-    }
+      // Check if the department already exists in the database
+      const departmentSnapshot = await database
+          .ref("/departments")
+          .child(dept)
+          .once("value");
+      if (departmentSnapshot.exists()) {
+          return res.status(400).send(`Department ${dept} already exists`);
+      }
 
-    // Add the new department to the Realtime Database under the 'departments' node
-    const departmentRef = database.ref("/departments").child(dept);
-    await departmentRef.set({
-      name: dept,
-    });
+      // Add the new department to the Realtime Database under the 'departments' node
+      const departmentRef = database.ref("/departments").child(dept);
+      await departmentRef.set({
+          name: dept,
+          course: stream // Include course information
+      });
 
-    console.log(`Department ${dept} added to Realtime Database`);
-    res.send(
-      `<script>alert('Department ${dept} added to Realtime databse');</script>`
-    );
+      console.log(`Department ${dept} added to Realtime Database`);
+      res.send(
+          `<script>alert('Department ${dept} added to Realtime database');</script>`
+      );
   } catch (error) {
-    console.error("Error:", error);
-    res.status(500).json({ error: error.message });
+      console.error("Error:", error);
+      res.status(500).json({ error: error.message });
   }
 });
+
 
 app.get("/departments", async (req, res) => {
   try {
@@ -287,7 +290,9 @@ app.post("/addSubject", async (req, res) => {
     // Check if the subject already exists in the department
     const existingSubjects = Object.values(subjects);
     if (existingSubjects.includes(subjectName)) {
-      return res.status(400).json({ error: "Subject already exists in the department" });
+      return res
+        .status(400)
+        .json({ error: "Subject already exists in the department" });
     }
 
     // Calculate the count of subjects for the selected department
@@ -312,7 +317,6 @@ app.post("/addSubject", async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
-
 
 // Add a new route to handle subjects for a specific department
 app.get("/subjects/:dept", async (req, res) => {
@@ -444,9 +448,7 @@ app.post("/addStream", async (req, res) => {
 
     // Check if streamName is defined and has a value
     if (!streamName || streamName.trim() === "") {
-      return res.send(
-        "<script>alert('Stream Name is required');</script>"
-      );
+      return res.send("<script>alert('Stream Name is required');</script>");
     }
 
     // Add the new stream to the Realtime Database under the 'streams' node
@@ -465,20 +467,23 @@ app.post("/addStream", async (req, res) => {
   }
 });
 // Add a new route to handle fetching stream names
-app.get('/streams', (req, res) => {
+app.get("/streams", (req, res) => {
   // Assuming 'streams' is a child node containing stream names
-  database.ref('streams').once('value', (snapshot) => {
-    const streams = snapshot.val();
-    if (streams) {
-      res.json(Object.keys(streams)); // Sending an array of stream names
-    } else {
-      res.status(404).send('Streams not found');
-    }
-  }).catch(error => {
-    console.error('Error fetching streams:', error);
-    res.status(500).send('Internal server error');
-  });
-});;
+  database
+    .ref("streams")
+    .once("value", (snapshot) => {
+      const streams = snapshot.val();
+      if (streams) {
+        res.json(Object.keys(streams)); // Sending an array of stream names
+      } else {
+        res.status(404).send("Streams not found");
+      }
+    })
+    .catch((error) => {
+      console.error("Error fetching streams:", error);
+      res.status(500).send("Internal server error");
+    });
+});
 app.get("/stream", async (req, res) => {
   try {
     // Fetch stream names from Firebase Realtime Database
@@ -511,7 +516,6 @@ app.delete("/stream/:streamName", async (req, res) => {
     res.status(500).send("Internal Server Error");
   }
 });
-
 
 app.listen(3000, () => {
   console.log(`Server is running at port http://localhost:${port}`);
