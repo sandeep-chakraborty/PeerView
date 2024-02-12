@@ -67,7 +67,9 @@
 
       <form action="/upload" method="post" enctype="multipart/form-data">
         <div class="form-group custom-file">
-          <label class="custom-file-label" for="pdf"><i class="ri-file-pdf-2-line p-1"></i>Choose PDF:</label>
+          <label class="custom-file-label" for="pdf"
+            ><i class="ri-file-pdf-2-line p-1"></i>Choose PDF:</label
+          >
           <input
             type="file"
             class="custom-file-input"
@@ -121,7 +123,9 @@
           />
         </div>
 
-        <button type="submit" class="btn btn-primary"><i class="ri-upload-cloud-fill p-1"></i>Upload PDF</button>
+        <button type="submit" class="btn btn-primary">
+          <i class="ri-upload-cloud-fill p-1"></i>Upload PDF
+        </button>
       </form>
 
       <hr />
@@ -230,7 +234,6 @@
             showAlert("danger", "No file chosen!");
           }
         });
-
       document
         .querySelector("form")
         .addEventListener("submit", async function (event) {
@@ -254,6 +257,8 @@
             if (response.ok) {
               // If the response is successful, show a success alert
               showAlert("success", "Paper uploaded successfully!");
+              // Reset the form fields
+              this.reset();
             } else {
               // If the response is not successful, show an error alert
               showAlert("danger", "Failed to upload paper.");
@@ -264,7 +269,6 @@
             showAlert("danger", "An error occurred. Please try again later.");
           }
         });
-
       function showAlert(type, message) {
         // Create the alert element
         const alert = document.createElement("div");
@@ -282,7 +286,7 @@
       document
         .getElementById("refreshButton")
         .addEventListener("click", function () {
-          location.reload(); // Reload the page
+          window.location.reload();
         });
     </script>
 

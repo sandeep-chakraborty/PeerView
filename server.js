@@ -516,6 +516,55 @@ app.delete("/stream/:streamName", async (req, res) => {
     res.status(500).send("Internal Server Error");
   }
 });
+// Add a new route to handle subject name updates
+app.post("/updateSubject", async (req, res) => {
+  try {
+    const { deptName, subjectKey, newSubjectName } = req.body;
+
+    // Check if the department and subject exist
+    const snapshot = await database.ref(`/subjects/${deptName}`).once("value");
+    const subjects = snapshot.val();
+
+    if (!subjects || !subjects[subjectKey]) {
+      return res.status(404).json({ error: "Subject not found" });
+    }
+
+    // Update the subject name in Firebase Realtime Database
+    subjects[subjectKey] = newSubjectName;
+    await database.ref(`/subjects/${deptName}`).set(subjects);
+
+    console.log(`Subject ${subjectKey} updated in department ${deptName}`);
+    res.status(200).send("<script>alert('Subject updated');</script>");
+    
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+app.post("/updatePaper", async (req, res) => {
+  try {
+    const { paperName,stream, dept, subject, semester, year } = req.body;
+
+    // Assuming you have a 'papers' collection in your Firebase database
+    const paperRef = database.ref(`/papers/${paperName}`);
+    
+    // Update paper information
+    await paperRef.update({
+      dept: dept,
+      course: stream,
+      subject: subject,
+      sem: semester,
+      year: year
+    });
+
+    console.log(`Paper ${paperName} updated with department ${dept}`);
+    res.status(200).json({ message: "Paper updated successfully" });
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).send("Error updating paper.");
+  }
+});
+
 
 app.listen(3000, () => {
   console.log(`Server is running at port http://localhost:${port}`);

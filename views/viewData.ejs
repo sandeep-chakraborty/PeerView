@@ -4,10 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>View Papers</title>
-    <link
-    href="https://cdn.jsdelivr.net/npm/remixicon@4.1.0/fonts/remixicon.css"
-    rel="stylesheet"
-/>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.1.0/fonts/remixicon.css" rel="stylesheet"/>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
         body {
@@ -28,136 +25,254 @@
             margin-top: 20px;
         }
         .footer {
-                text-align: center;
-                margin-top: 30px;
-            }
+            text-align: center;
+            margin-top: 30px;
+        }
     </style>
 </head>
 <body>
-    <div class="container-md mt-5">
-        <h1>View Papers</h1>
-        <div class="input-group mb-3">
-            <input type="text" id="searchInput" class="form-control" placeholder="Search Paper Names, Course, Semester, Year">
-            <div class="input-group-append">
-                <button id="clearButton" class="btn btn-danger" type="button"><i class="ri-close-fill"></i></button>
-                <button id="searchButton" class="btn btn-primary" type="button">Search</button>
-                
-            </div>
-        </div>
-        <button id="refreshButton" class="btn btn-primary m-3 float-right "><i class="ri-refresh-line"></i> Refresh this page</button>
-        <table class="table table-bordered">
-            <thead class="thead-dark">
-                <tr>
-                    <th><i class="ri-book-2-fill p-2"></i>Stream</th>
-                    <th><i class="ri-home-3-fill p-2"></i>Department</th>
-                    <th><i class="ri-hashtag p-2"></i>Semester</th>
-                    <th><i class="ri-attachment-line p-2"></i>Paper Name</th>
-                    <th><i class="ri-git-repository-fill p-2"></i>Subject</th>
-                    <th>Year</th>
-                    <th><i class="ri-link"></i>View PDF</th>
-                    <th>Edit</th>
-                    <th><i class="ri-close-circle-fill p-2"></i>Delete</th>
-                </tr>
-            </thead>
-            <tbody id="papersTableBody">
-                <% papers.forEach(paper => { %>
-                <tr>
-                    <td><i class="ri-book-2-line p-1"></i><%= paper.course %></td>
-                    <td><i class="ri-home-3-line p-1"></i><%= paper.dept %></td>
-                    <td><%= paper.sem %></td>
-                    <td><i class="ri-booklet-line"></i><%= paper.paperName %></td>
-                    <td><i class="ri-git-repository-line p-1"></i><%= paper.subject %></td>
-                    <td><%= paper.year %></td>
-                    <!-- Cell for Stream -->
-                    <td>
-                        <a href="<%= paper.paperUrl %>" target="_blank"><i class="ri-links-line"></i>View PDF</a>
-                    </td>
-                    <td>
-                        <!-- <button
-                            class="btn btn-primary"
-                            data-toggle="modal"
-                            data-target="#editModal"
-                            data-papername="<%#= paper.paperName %>"
-                            data-dept="<%#= paper.dept %>"
-                            data-subject="<%#= paper.subject %>"
-                            data-sem="<%#= paper.sem %>"
-                            data-year="<%#= paper.year %>"
-                        >
-                            Edit
-                        </button> -->
-                    </td>
-                    <td>
-                        <form
-                            action="/delete/<%= paper.paperName %>?_method=DELETE"
-                            method="post"
-                            onsubmit="return confirm('Are you sure you want to delete this paper?');"
-                        >
-                            <input type="hidden" name="_method" value="DELETE" />
-                            <button type="submit" class="btn btn-danger"><i class="ri-close-circle-line p-1"></i>Delete</button>
-                        </form>
-                    </td>
-                </tr>
-                <% }); %>
-            </tbody>
-        </table>
-        <div class="footer">
-            Powered by SRP🚀
+<div class="container-md mt-5">
+    <h1>View Papers</h1>
+    <div class="input-group mb-3">
+        <input type="text" id="searchInput" class="form-control" placeholder="Search Paper Names, Course, Semester, Year">
+        <div class="input-group-append">
+            <button id="clearButton" class="btn btn-danger" type="button"><i class="ri-close-fill"></i></button>
+            <button id="searchButton" class="btn btn-primary" type="button">Search</button>
         </div>
     </div>
+    <button id="refreshButton" class="btn btn-primary m-3 float-right" onclick="window.location.reload()"><i class="ri-refresh-line"></i> Refresh this page</button>
+    <table class="table table-bordered">
+        <thead class="thead-dark">
+        <tr>
+            <th><i class="ri-book-2-fill p-2"></i>Stream</th>
+            <th><i class="ri-home-3-fill p-2"></i>Department</th>
+            <th><i class="ri-hashtag p-2"></i>Semester</th>
+            <th><i class="ri-attachment-line p-2"></i>Paper Name</th>
+            <th><i class="ri-git-repository-fill p-2"></i>Subject</th>
+            <th>Year</th>
+            <th><i class="ri-link"></i>View PDF</th>
+            <th>Edit</th>
+            <th><i class="ri-close-circle-fill p-2"></i>Delete</th>
+        </tr>
+        </thead>
+        <tbody id="papersTableBody">
+        <% papers.forEach(paper => { %>
+        <tr>
+            <td><i class="ri-book-2-line p-1"></i><%= paper.course %></td>
+            <td><i class="ri-home-3-line p-1"></i><%= paper.dept %></td>
+            <td><%= paper.sem %></td>
+            <td><i class="ri-booklet-line"></i><%= paper.paperName %></td>
+            <td><i class="ri-git-repository-line p-1"></i><%= paper.subject %></td>
+            <td><%= paper.year %></td>
+            <!-- Cell for Stream -->
+            <td>
+                <a href="<%= paper.paperUrl %>" target="_blank"><i class="ri-links-line"></i>View PDF</a>
+            </td>
+            <td>
+                <button
+                        class="btn btn-primary edit-btn"
+                        data-toggle="modal"
+                        data-target="#editPaperModal"
+                        data-papername="<%= paper.paperName %>"
+                        data-dept="<%= paper.dept %>"
+                        data-subject="<%= paper.subject %>"
+                        data-sem="<%= paper.sem %>"
+                        data-year="<%= paper.year %>"
+                >
+                    Edit
+                </button>
+            </td>
+            <td>
+                <form
+                        action="/delete/<%= paper.paperName %>?_method=DELETE"
+                        method="post"
+                        onsubmit="return confirm('Are you sure you want to delete this paper?');"
+                >
+                    <input type="hidden" name="_method" value="DELETE" />
+                    <button type="submit" class="btn btn-danger"><i class="ri-close-circle-line p-1"></i>Delete</button>
+                </form>
+            </td>
+        </tr>
+        <% }); %>
+        </tbody>
+    </table>
+    <!-- Edit Paper Modal -->
+    <div class="modal fade" id="editPaperModal" tabindex="-1" role="dialog" aria-labelledby="editPaperModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editPaperModalLabel">Edit Paper</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="editPaperForm" action="/updatePaper" method="post">
+                        <div class="form-group">
+                            <label for="editPaperName">Paper Name</label>
+                            <input type="text" class="form-control" id="editPaperName" name="paperName" readonly>
+                        </div>
+                        <div class="form-group">
+                            <div class="form-group">
+                                <label for="stream">Stream:</label>
+                                <select class="form-control" name="stream" id="editStream" required>
+                                  <!-- Streams will be dynamically loaded here using JavaScript -->
+                                </select>
+          <label for="dept">Department:</label>
+          <select class="form-control" name="dept" id="dept" required>
+            <!-- Departments will be dynamically loaded here using JavaScript -->
+          </select>
+        </div>
+                        
+                        <div class="form-group">
+                            <label for="subject">Subject:</label>
+                            <select class="form-control" name="subject" id="subject" required>
+                              <!-- Subjects will be dynamically loaded here using JavaScript -->
+                            </select>
+                        <div class="form-group">
+                            <label for="editSemester">Semester</label>
+                            <input type="text" class="form-control" id="editSemester" name="semester" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="editYear">Year</label>
+                            <input type="text" class="form-control" id="editYear" name="year" required>
+                        </div>
+                        <input type="hidden" id="editPaperUrl" name="paperUrl">
+                        <input type="hidden" id="editPaperKey" name="paperKey">
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="savePaperChangesBtn">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="footer">
+        Powered by SRP🚀
+    </div>
+</div>
 
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
-    <script>
-        // Function to reset table rows to original state
-        function resetTableRows() {
-            var tableRows = document.querySelectorAll("#papersTableBody tr");
-            tableRows.forEach(function(row) {
-                row.style.display = "";
-            });
+<script>
+    
+    $('.edit-btn').click(function() {
+        var paperName = $(this).data('papername');
+        var stream = $(this).data('stream');
+        var department = $(this).data('dept');
+        var subject = $(this).data('subject');
+        var semester = $(this).data('sem');
+        var year = $(this).data('year');
+
+        $('#editPaperName').val(paperName);
+        $('#editStream').val(stream);
+        $('#editDepartment').val(department);
+        $('#editSubject').val(subject);
+        $('#editSemester').val(semester);
+        $('#editYear').val(year);
+    });
+
+    $('#savePaperChangesBtn').click(function() {
+        $('#editPaperForm').submit();
+    });
+
+    $('#editPaperForm').submit(function(event) {
+       
+        if (confirm('Are you sure you want to save changes?')) {
+            window.location.reload();
+            return true;
+        } else {
+            return false;
+        }
+    });
+    document.addEventListener("DOMContentLoaded", async function () {
+        const deptDropdown = document.getElementById("dept");
+        const subjectDropdown = document.getElementById("subject");
+
+        const departmentsResponse = await fetch("/departments");
+        const departments = await departmentsResponse.json();
+
+        departments.forEach((department) => {
+          const option = document.createElement("option");
+          option.value = department.name;
+          option.text = department.name;
+          deptDropdown.add(option);
+        });
+        document.addEventListener("DOMContentLoaded", async function () {
+        const streamDropdown = document.getElementById("stream");
+
+        // Fetch stream names from the backend
+        try {
+          const streamsResponse = await fetch("/streams");
+          if (!streamsResponse.ok) {
+            throw new Error("Failed to fetch streams");
+          }
+          const streams = await streamsResponse.json();
+
+          // Populate the Stream dropdown with fetched stream names
+          streams.forEach((streamName) => {
+            const option = document.createElement("option");
+            option.value = streamName;
+            option.textContent = streamName;
+            streamDropdown.appendChild(option);
+          });
+        } catch (error) {
+          console.error("Error fetching streams:", error);
+          // Handle error fetching streams
+        }
+        });
+
+        async function populateSubjects(selectedDept) {
+          const subjectsResponse = await fetch(`/subjects/${selectedDept}`);
+          const subjects = await subjectsResponse.json();
+
+          subjectDropdown.innerHTML = "";
+
+          Object.entries(subjects).forEach(([key, value]) => {
+            const option = document.createElement("option");
+            option.value = value;
+            option.text = value;
+            subjectDropdown.add(option);
+          });
         }
 
-        document.getElementById("refreshButton").addEventListener("click", function() {
-            location.reload(); // Reload the page
+        deptDropdown.addEventListener("change", async function () {
+          const selectedDept = deptDropdown.value;
+          await populateSubjects(selectedDept);
         });
 
-        document.getElementById("searchButton").addEventListener("click", function() {
-            var searchInput = document.getElementById("searchInput").value.toLowerCase();
-            var tableRows = document.querySelectorAll("#papersTableBody tr");
+        const initialSelectedDept = deptDropdown.value;
+        await populateSubjects(initialSelectedDept);
+      });
+      document.addEventListener("DOMContentLoaded", async function () {
+        const streamDropdown = document.getElementById("editStream");
 
-            tableRows.forEach(function(row) {
-                var course = row.querySelector("td:nth-child(1)").innerText.toLowerCase();
-                var paperName = row.querySelector("td:nth-child(4)").innerText.toLowerCase();
-                var sem = row.querySelector("td:nth-child(3)").innerText.toLowerCase();
-                var year = row.querySelector("td:nth-child(6)").innerText.toLowerCase();
-                
-                if (course.includes(searchInput) || paperName.includes(searchInput) || sem.includes(searchInput) || year.includes(searchInput)) {
-                    row.style.display = "";
-                } else {
-                    row.style.display = "none";
-                }
-            });
-        });
+        // Fetch stream names from the backend
+        try {
+          const streamsResponse = await fetch("/streams");
+          if (!streamsResponse.ok) {
+            throw new Error("Failed to fetch streams");
+          }
+          const streams = await streamsResponse.json();
 
-        document.getElementById("searchInput").addEventListener("input", function() {
-            resetTableRows(); // Reset table rows to original state
-            document.getElementById("searchButton").click(); // Trigger click event of search button
+          // Populate the Stream dropdown with fetched stream names
+          streams.forEach((streamName) => {
+            const option = document.createElement("option");
+            option.value = streamName;
+            option.textContent = streamName;
+            streamDropdown.appendChild(option);
+          });
+        } catch (error) {
+          console.error("Error fetching streams:", error);
+          // Handle error fetching streams
+        }
         });
+      
+     
+</script>
 
-        document.getElementById("searchInput").addEventListener("keydown", function(event) {
-            if (event.key === "Enter") {
-                event.preventDefault(); // Prevent form submission
-            } else if (event.key === "Escape") {
-                document.getElementById("clearButton").click(); // Trigger click event of clear button
-            }
-        });
-
-        document.getElementById("clearButton").addEventListener("click", function() {
-            document.getElementById("searchInput").value = ""; // Clear the search input
-            resetTableRows(); // Reset table rows to original state
-            document.getElementById("searchButton").click(); // Trigger click event of search button
-        });
-    </script>
 </body>
 </html>
