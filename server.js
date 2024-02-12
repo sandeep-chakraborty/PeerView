@@ -543,13 +543,27 @@ app.post("/updateSubject", async (req, res) => {
 });
 app.post("/updatePaper", async (req, res) => {
   try {
-    const { paperName,stream, dept, subject, semester, year } = req.body;
+    const { paperName, stream, dept, subject, semester, year } = req.body;
 
     // Assuming you have a 'papers' collection in your Firebase database
     const paperRef = database.ref(`/papers/${paperName}`);
+    const newPaperName = `${dept}-${semester}-${subject}-${year}`;
+
+    // Fetch the existing paper data
+    const snapshot = await paperRef.once('value');
+    const paperData = snapshot.val();
+
+    if (!paperData) {
+      return res.status(404).json({ message: `Paper ${paperName} not found.` });
+    }
+
+    // Delete the old key and set the new key with updated name
+    await paperRef.remove();
+    const updatedPaperRef = database.ref(`/papers/${newPaperName}`);
     
-    // Update paper information
-    await paperRef.update({
+    // Set the updated paper information
+    await updatedPaperRef.set({
+      paperName: newPaperName,
       dept: dept,
       course: stream,
       subject: subject,
@@ -557,13 +571,14 @@ app.post("/updatePaper", async (req, res) => {
       year: year
     });
 
-    console.log(`Paper ${paperName} updated with department ${dept}`);
+    console.log(`Paper ${paperName} updated with new name ${newPaperName}`);
     res.status(200).json({ message: "Paper updated successfully" });
   } catch (error) {
     console.error("Error:", error);
     res.status(500).send("Error updating paper.");
   }
 });
+
 
 
 app.listen(3000, () => {
