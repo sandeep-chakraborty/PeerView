@@ -22,7 +22,7 @@ app.get("/", (req, res) => {
 
 app.post("/upload", upload.single("pdf"), async (req, res) => {
   const { originalname, buffer } = req.file;
-  const { dept, sem, year, subject, stream: selectedStream } = req.body; // Include 'stream' from form data
+  const { dept, sem, year, subject, stream: selectedStream,university:uniName} = req.body; // Include 'stream' from form data
   const PaperName = `${dept}-${sem}-${subject}-${year}`;
   const fileName = originalname;
 
@@ -54,7 +54,8 @@ app.post("/upload", upload.single("pdf"), async (req, res) => {
           paperUrl: downloadURL,
           subject: subject,
           year: year,
-          course: selectedStream, // Include the stream in the fileData
+          course: selectedStream,
+          university:uniName, // Include the stream in the fileData
         };
 
         // Save data to Realtime Database with PaperName as the key
@@ -578,7 +579,55 @@ app.post("/updatePaper", async (req, res) => {
     res.status(500).send("Error updating paper.");
   }
 });
+// Add route to render addUni.html
+app.get("/addUni", (req, res) => {
+  res.sendFile(__dirname + "/src/addUni.html");
+});
 
+// Add route to handle adding universities
+app.post("/addUni", async (req, res) => {
+  try {
+    const { universityName } = req.body;
+
+    // Check if universityName is defined and has a value
+    if (!universityName || universityName.trim() === "") {
+      return res.status(400).json({ error: "University Name is required" });
+    }
+
+    // Add the new university to the Realtime Database under the 'universities' node
+    const universityRef = database.ref("/universities").child(universityName);
+    await universityRef.set({
+      name: universityName,
+    });
+
+    console.log(`University ${universityName} added to Realtime Database`);
+    res.send(
+      `<script>alert('University ${universityName} added successfully');</script>`
+    );
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+//get university nam,e from realtime database
+app.get("/universities", (req, res) => {
+  // Assuming 'university' is the parent node containing university names
+  database
+    .ref("universities")
+    .once("value")
+    .then((snapshot) => {
+      const universities = snapshot.val();
+      if (universities) {
+        res.json(Object.keys(universities)); // Sending an array of university names
+      } else {
+        res.status(404).send("Universities not found");
+      }
+    })
+    .catch((error) => {
+      console.error("Error fetching universities:", error);
+      res.status(500).send("Internal server error");
+    });
+});
 
 
 app.listen(3000, () => {
