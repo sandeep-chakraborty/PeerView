@@ -156,6 +156,34 @@
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script>
+    $(document).ready(function(){
+        $('#searchInput').on('input', function(){
+            var searchText = $(this).val().toLowerCase();
+            $('#papersTableBody tr').each(function(){
+                var paperName = $(this).find('td:nth-child(4)').text().toLowerCase();
+                var course = $(this).find('td:nth-child(1)').text().toLowerCase();
+                var semester = $(this).find('td:nth-child(3)').text().toLowerCase();
+                var year = $(this).find('td:nth-child(6)').text().toLowerCase();
+                var subject = $(this).find('td:nth-child(5)').text().toLowerCase();
+                var department = $(this).find('td:nth-child(2)').text().toLowerCase();
+
+                if (paperName.includes(searchText) || course.includes(searchText) || semester.includes(searchText) || year.includes(searchText) || subject.includes(searchText) || department.includes(searchText)) {
+                    $(this).show();
+                } else {
+                    $(this).hide();
+                }
+            });
+        });
+
+        $(document).on('keydown', function(e){
+            if (e.key === 'Escape') {
+                $('#searchInput').val('');
+                $('#papersTableBody tr').show();
+            }
+        });
+    });
+</script>
 
 <script>
     
