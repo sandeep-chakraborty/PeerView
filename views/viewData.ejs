@@ -159,7 +159,9 @@
 <script>
     $(document).ready(function(){
         $('#searchInput').on('input', function(){
-            var searchText = $(this).val().toLowerCase();
+            var searchText = $(this).val().toLowerCase().trim(); // Trim spaces from the beginning and end of the search text
+            var searchWords = searchText.split(/\s+/); // Split the search text into words
+
             $('#papersTableBody tr').each(function(){
                 var paperName = $(this).find('td:nth-child(4)').text().toLowerCase();
                 var course = $(this).find('td:nth-child(1)').text().toLowerCase();
@@ -168,7 +170,16 @@
                 var subject = $(this).find('td:nth-child(5)').text().toLowerCase();
                 var department = $(this).find('td:nth-child(2)').text().toLowerCase();
 
-                if (paperName.includes(searchText) || course.includes(searchText) || semester.includes(searchText) || year.includes(searchText) || subject.includes(searchText) || department.includes(searchText)) {
+                var rowVisible = false;
+                for (var i = 0; i < searchWords.length; i++) {
+                    var word = searchWords[i];
+                    if (paperName.includes(word) || course.includes(word) || semester.includes(word) || year.includes(word) || subject.includes(word) || department.includes(word)) {
+                        rowVisible = true;
+                        break; // Break the loop if any word matches
+                    }
+                }
+
+                if (rowVisible) {
                     $(this).show();
                 } else {
                     $(this).hide();
@@ -185,7 +196,8 @@
     });
 </script>
 
-<script>
+
+<>
     
     $('.edit-btn').click(function() {
         var paperName = $(this).data('papername');
@@ -300,7 +312,7 @@
         });
       
      
-</script>
+</>
 
 </body>
 </html>
